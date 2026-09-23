@@ -218,6 +218,7 @@ function subProjectPanelHTML(parentId, subId) {
         <div class="card-meta"><span>${sub.role}</span><span>${sub.timeframe}</span></div>
         <p style="font-size:0.88rem;color:var(--ink-soft);margin:0.5rem 0;">${sub.oneLiner}</p>
         ${detailSectionsHTML(sub)}
+        ${photosHTML(sub)}
       </div>
     </div>
   `;
@@ -253,11 +254,6 @@ function projectCardHTML(project, index) {
           ${detailSectionsHTML(project)}
           ${photosHTML(project)}
           ${subProjectLinksHTML(project)}
-          ${project.resumeBullet ? `
-            <div class="detail-section">
-              <h5>Resume Bullet</h5>
-              <div class="resume-bullet">${project.resumeBullet}</div>
-            </div>` : ''}
         </div>
       </div>
     </article>

@@ -39,12 +39,12 @@ const SKILL_GROUPS = [
   {
     label: "Autonomy & Software",
     icon: "chip",
-    skills: ["ROS2", "MAVLink", "Sensor Fusion", "Raspberry Pi"],
+    skills: ["NVIDIA Isaac Sim (planned)", "State Estimation", "Autonomous Navigation"],
   },
 ];
 
 // Category filter keys must match `category` on each project below.
-const CATEGORIES = ["All", "Robotics", "Mechanical Design", "Thermal/Fluids", "Aerospace"];
+const CATEGORIES = ["All", "Robotics", "Mechanical Design"];
 
 /* Each project:
    id           - slug, used for anchors
@@ -108,7 +108,6 @@ const PROJECTS = [
         physical build with verified electronics, a Bluetooth-driven test run, and a measured
         center of gravity (CG ≈ (4.1, 4.1)) confirming real-world stability.`,
     },
-    resumeBullet: "Carried a four-bar leg mechanism from kinematic design (GeoGebra) and simulated CAD (SolidWorks) through a physically built, team-fabricated 8-leg walking robot — owned electronics/wiring and validated center-of-gravity stability for MAE 183.",
     subProjects: ["quadruped-individual", "bear-walker-team"],
   },
   {
@@ -127,6 +126,8 @@ const PROJECTS = [
       items: [
         { src: "images/zotbotics-arm.jpg", alt: "Assembled BCN3D Moveo robotic arm with 3D-printed hand end-effector, mounted on a demo stand", caption: "Assembled arm with the 3D-printed hand end-effector" },
         { src: "images/zotbotics-team.jpg", alt: "Six-person ZOTBotics team posing with the finished robotic arm after placing 1st", caption: "The team after placing 1st of 14 in the Rock-Paper-Scissors competition" },
+        // TODO: add the isometric CAD renders of the hand assembly here once provided —
+        // e.g. { src: "images/zotbotics-hand-isometric.png", alt: "...", caption: "..." }
       ],
     },
     sections: {
@@ -176,17 +177,16 @@ const PROJECTS = [
         clamping mechanism, which would grip the servo shaft securely and eliminate the slipping
         issue that forced a super-glue fix.`,
     },
-    resumeBullet: "Designed the hand/finger end-effector for a 6-person robotics team's 3D-printed robotic arm in SolidWorks, improving joint stability ~25% through iterative CAD and tolerance analysis; arm placed 1st of 14 teams in a live Rock-Paper-Scissors competition.",
   },
   {
     id: "quadrotor",
     name: "Autonomous GPS-Denied Indoor Quadrotor",
     course: "Solo Build",
-    oneLiner: "Designing and building a 250mm autonomous quadrotor for GPS-denied indoor navigation — custom CAD airframe, two-bus electrical architecture, and an ArduPilot/ROS2 sensor-fusion pipeline.",
+    oneLiner: "Designing and building a 250mm autonomous quadrotor for GPS-denied indoor navigation — custom CAD airframe, two-bus electrical architecture, and an ArduPilot flight stack.",
     role: "Solo builder — mechanical design, electrical integration, firmware, and autonomy, end to end.",
     timeframe: "Mar 2026 – Present",
     category: "Robotics",
-    tags: ["CAD", "FEA", "Controls", "Manufacturing"],
+    tags: ["CAD", "FEA", "Controls", "Manufacturing", "NVIDIA Isaac Sim"],
     status: "In Progress",
     featured: true,
     media: { type: "diagram", key: "quadrotor" },
@@ -197,13 +197,13 @@ const PROJECTS = [
         position and navigate waypoints indoors using only onboard sensors, no GPS.`,
       contribution: `Solo build, top to bottom: component selection, full-assembly CAD in
         SolidWorks, custom TPU prop-guard design, ESC/FC wiring and configuration, ArduPilot
-        setup, and (in progress) ROS2-based mission planning on a Raspberry Pi 4 companion
-        computer.`,
-      approach: `An Extended Kalman Filter on ArduPilot fuses IMU, optical-flow, and barometer
-        data for GPS-denied position estimates. A Raspberry Pi 4 running ROS2 talks to the flight
-        controller over MAVLink for mission planning and, later, obstacle detection. Custom parts
-        — a vibration-isolated FC mount and 4-spoke TPU prop guards — were modeled from scratch
-        rather than sourced.`,
+        setup, and (planned) validating autonomy logic in NVIDIA Isaac Sim before it goes on
+        hardware.`,
+      approach: `An onboard estimator on ArduPilot combines IMU, optical-flow, and barometer
+        readings for GPS-denied position holds. Custom parts — a vibration-isolated FC mount and
+        4-spoke TPU prop guards — were modeled from scratch rather than sourced. Next up:
+        building out an Isaac Sim environment to test navigation logic safely before it ever
+        touches the physical airframe.`,
       challenges: `Iterative tolerance correction on the 3D-printed prop guards to fit the frame
         without adding vibration; a two-bus wiring architecture (high-current power bus kept
         physically separate from the low-current signal bus) to avoid a class of wiring failures
@@ -212,50 +212,6 @@ const PROJECTS = [
       results: `In progress — Phase 1 of 5 (hardware foundation). Target milestones: stable
         indoor position hold within ±15cm (Phase 3) and a 4-waypoint autonomous indoor mission
         with no human intervention (Phase 4).`,
-    },
-    resumeBullet: "Designing and building a 250mm autonomous quadrotor for GPS-denied indoor navigation — custom CAD airframe, two-bus electrical architecture, and ArduPilot/ROS2 sensor-fusion pipeline (flight-test results pending).",
-  },
-  {
-    id: "heat-sink",
-    name: "Active Air-Cooled Heat Sink for a LiPo Battery Pack",
-    course: "Independent Project",
-    oneLiner: "Designing and testing a fan-cooled heat sink to keep a simulated LiPo battery load below a safe temperature, validating hand calculations against SolidWorks Flow Simulation and real sensor data.",
-    role: "Solo — thermal analysis, CAD, and test",
-    timeframe: "2026 (in progress)",
-    category: "Thermal/Fluids",
-    tags: ["CAD", "Simulation", "Manufacturing"],
-    status: "Notes Collected",
-    featured: false,
-    media: { type: "diagram", key: "heatsink" },
-    sections: {
-      problem: `LiPo battery packs under sustained load generate heat that, left unmanaged,
-        degrades performance and safety margins. This project designs and validates a
-        fan-assisted heat sink sized to keep a simulated battery load within a safe operating
-        temperature.`,
-      approach: `Hand calculations for convective heat transfer set the target fin geometry and
-        airflow rate, then SolidWorks Flow Simulation validates the design digitally before a
-        physical build is instrumented with temperature sensors to compare simulation against
-        real measured data.`,
-      results: `In progress — build and physical test not yet complete.`,
-    },
-  },
-  {
-    id: "cubesat-hinge",
-    name: "CubeSat Solar Panel Hinge",
-    course: "L'SPACE Portfolio Project",
-    oneLiner: "Planned: design a CubeSat deployable solar-panel hinge showing a documented V1 → failure → V2 → fix evolution, validated with basic FEA, for an L'SPACE application.",
-    role: "Solo (planned)",
-    timeframe: "Scoped as a 3-week project",
-    category: "Aerospace",
-    tags: ["CAD", "FEA"],
-    status: "Not Started",
-    featured: false,
-    media: { type: "diagram", key: "cubesat" },
-    sections: {
-      problem: `L'SPACE portfolio projects ask for a documented design-iteration story rather
-        than just a finished part. This project is scoped to design a CubeSat deployable
-        solar-panel hinge, deliberately capture a first-pass failure mode, then show the redesign
-        that fixes it — validated with basic FEA.`,
     },
   },
 
@@ -272,7 +228,12 @@ const PROJECTS = [
     timeframe: "Jun 2026",
     tags: ["CAD", "SolidWorks", "Simulation"],
     status: "Draft Written",
-    media: { type: "diagram", key: "fourbar" },
+    media: {
+      type: "photos",
+      items: [
+        { src: "images/quadruped-snorlax-cad.png", alt: "SolidWorks CAD assembly of the Snorlax-themed quadruped walking robot, showing two leg-linkage variants", caption: "SolidWorks CAD assembly of the Snorlax-themed quadruped walker" },
+      ],
+    },
     sections: {
       problem: `A 4-part homework sequence (HW1–HW4) synthesizing a four-bar leg linkage for a
         walking robot, iterating from planar kinematics to a fully simulated CAD assembly.`,
@@ -293,7 +254,14 @@ const PROJECTS = [
     timeframe: "Spring 2026",
     tags: ["Arduino/C++", "Manufacturing", "Controls"],
     status: "Draft Written",
-    media: { type: "diagram", key: "bearwalker" },
+    media: {
+      type: "photos",
+      items: [
+        { src: "images/bear-walker-cad.png", alt: "CAD render of the Bear Walker's laser-cut leg mechanism and body panels", caption: "CAD assembly of the Bear Walker's leg mechanism" },
+        { src: "images/bear-walker-manufactured.png", alt: "The fully fabricated, laser-cut wood Bear Walker robot held up for a photo", caption: "The fully fabricated Bear Walker, laser-cut and assembled" },
+        { src: "images/bear-walker-team-photo.png", alt: "The MAE 183 team working through the center-of-gravity calculation, with robot parts on the table", caption: "Working through the center-of-gravity calculation and final assembly" },
+      ],
+    },
     sections: {
       problem: `A ~6-person team took the rectilinear four-bar leg linkage concept and built it
         into a physically fabricated, working walking robot — laser-cut wood construction with
