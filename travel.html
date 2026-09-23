@@ -5,36 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Travel | Timothy Cho</title>
 <meta name="description" content="An interactive map of places Timothy Cho has traveled — pan, zoom, and click a pin to see photos and notes." />
+<script>
+  (function () {
+    var saved = localStorage.getItem('theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  })();
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 
 <style>
   :root {
-    color-scheme: dark;
-    --bg: #0a0f1c;
-    --bg-map: #0c1324;
-    --panel: #121a2c;
-    --panel-2: #16203a;
-    --border: #223055;
-    --land: #1a2542;
-    --land-border: #2c3c68;
-    --graticule: #1c2847;
-    --text: #eef1f8;
-    --text-muted: #8fa0c0;
-    --text-faint: #5c6c8f;
-    --accent: #ffb454;
-    --accent-soft: #ffb45426;
-    --route: #5eead4;
-    --route-soft: #5eead44a;
+    color-scheme: light dark;
+    --bg: #f4f1ea;
+    --bg-map: #ebe7dc;
+    --panel: #ffffff;
+    --panel-2: #ebe7dc;
+    --border: rgba(26, 37, 48, 0.14);
+    --grid-line: rgba(28, 63, 95, 0.08);
+    --land: color-mix(in srgb, #1c3f5f 14%, #ffffff);
+    --land-border: color-mix(in srgb, #1c3f5f 30%, #ffffff);
+    --graticule: rgba(28, 63, 95, 0.08);
+    --text: #1a2530;
+    --text-muted: #4d5b66;
+    --text-faint: #8a95a0;
+    --accent: #1560bd;
+    --accent-soft: rgba(21, 96, 189, 0.15);
+    --route: #1c3f5f;
+    --route-soft: rgba(28, 63, 95, 0.3);
+    --panel-border-strong: rgba(26, 37, 48, 0.28);
 
-    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-    --font-body: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+    --transition: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f1720;
+    --bg-map: #0b131b;
+    --panel: #16212c;
+    --panel-2: #0b131b;
+    --border: rgba(233, 237, 241, 0.12);
+    --grid-line: rgba(79, 143, 224, 0.07);
+    --land: color-mix(in srgb, #6fa8d8 16%, #16212c);
+    --land-border: color-mix(in srgb, #6fa8d8 34%, #16212c);
+    --graticule: rgba(79, 143, 224, 0.07);
+    --text: #e9edf1;
+    --text-muted: #aab6c0;
+    --text-faint: #6b7a86;
+    --accent: #4f8fe0;
+    --accent-soft: rgba(79, 143, 224, 0.15);
+    --route: #6fa8d8;
+    --route-soft: rgba(111, 168, 216, 0.3);
+    --panel-border-strong: rgba(233, 237, 241, 0.24);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1720;
+      --bg-map: #0b131b;
+      --panel: #16212c;
+      --panel-2: #0b131b;
+      --border: rgba(233, 237, 241, 0.12);
+      --grid-line: rgba(79, 143, 224, 0.07);
+      --land: color-mix(in srgb, #6fa8d8 16%, #16212c);
+      --land-border: color-mix(in srgb, #6fa8d8 34%, #16212c);
+      --graticule: rgba(79, 143, 224, 0.07);
+      --text: #e9edf1;
+      --text-muted: #aab6c0;
+      --text-faint: #6b7a86;
+      --accent: #4f8fe0;
+      --accent-soft: rgba(79, 143, 224, 0.15);
+      --route: #6fa8d8;
+      --route-soft: rgba(111, 168, 216, 0.3);
+      --panel-border-strong: rgba(233, 237, 241, 0.24);
+    }
   }
 
   * { box-sizing: border-box; }
@@ -42,14 +94,27 @@
   html, body { margin: 0; }
 
   body {
-    background: var(--bg);
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 32px 32px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 32px 32px,
+      var(--bg);
     color: var(--text);
     font-family: var(--font-body);
     padding-inline: 20px;
     padding-block: 28px 72px;
+    transition: background-color var(--transition), color var(--transition);
   }
 
   a { color: var(--route); }
+
+  .top-bar {
+    max-width: 1180px;
+    margin: 0 auto 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
 
   .site-back {
     display: inline-flex;
@@ -59,9 +124,27 @@
     font-size: 0.78rem;
     color: var(--text-muted);
     text-decoration: none;
-    margin-bottom: 22px;
   }
   .site-back:hover { color: var(--route); }
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: border-color var(--transition), color var(--transition), transform var(--transition);
+    flex: none;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); transform: rotate(20deg); }
+  .theme-toggle svg { width: 17px; height: 17px; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+  :root:not([data-theme="dark"]) .theme-toggle .icon-sun { display: none; }
 
   .page {
     max-width: 1180px;
@@ -219,7 +302,7 @@
     font-size: 9.5px;
     font-weight: 700;
     fill: var(--text);
-    stroke: #0a0f1c;
+    stroke: var(--panel);
     stroke-width: 3px;
     paint-order: stroke;
     opacity: 0;
@@ -240,7 +323,7 @@
 
   .pin.is-home .pin-dot {
     fill: var(--text);
-    stroke: #eef1f822;
+    stroke: var(--border);
   }
 
   .map-hint {
@@ -332,13 +415,13 @@
   .photo-placeholder {
     aspect-ratio: 4 / 3;
     border-radius: 8px;
-    border: 1px dashed #ffffff2e;
+    border: 1px dashed var(--border);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    color: #ffffffb0;
+    color: var(--text-faint);
   }
   .photo-placeholder svg { opacity: 0.85; }
   .photo-placeholder span {
@@ -442,7 +525,10 @@
 </head>
 <body>
 
-<a class="site-back" href="index.html">&larr; Back to portfolio</a>
+<div class="top-bar">
+  <a class="site-back" href="index.html">&larr; Back to portfolio</a>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+</div>
 
 <div class="page">
 
@@ -773,7 +859,12 @@
     for (var i = 0; i < 3; i++) {
       var ph = document.createElement("div");
       ph.className = "photo-placeholder";
-      ph.style.background = "linear-gradient(160deg, hsl(" + dest.hue + " 45% 20%), hsl(" + dest.hue + " 35% 12%))";
+      var isDark = document.documentElement.getAttribute("data-theme")
+        ? document.documentElement.getAttribute("data-theme") === "dark"
+        : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var l1 = isDark ? "45% 20%" : "88% 55%";
+      var l2 = isDark ? "35% 12%" : "80% 48%";
+      ph.style.background = "linear-gradient(160deg, hsl(" + dest.hue + " " + l1 + "), hsl(" + dest.hue + " " + l2 + "))";
       ph.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><span>Photo soon</span>';
       photoGrid.appendChild(ph);
     }
@@ -807,6 +898,25 @@
 
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && activeId) clearSelection();
+  });
+})();
+</script>
+
+<script>
+(function () {
+  var ICONS = {
+    sun: '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+    moon: '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+  };
+  var btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  btn.innerHTML = ICONS.sun + ICONS.moon;
+  btn.addEventListener('click', function () {
+    var current = document.documentElement.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
   });
 })();
 </script>
