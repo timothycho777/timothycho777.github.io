@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Travel | Timothy Cho</title>
+<meta name="description" content="An interactive map of places Timothy Cho has traveled — click a pin to zoom in and see photos and notes." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0a0f1c;
+    --bg-map: #0c1324;
+    --panel: #121a2c;
+    --panel-2: #16203a;
+    --border: #223055;
+    --dot: #2a3860;
+    --text: #eef1f8;
+    --text-muted: #8fa0c0;
+    --text-faint: #5c6c8f;
+    --accent: #ffb454;
+    --accent-soft: #ffb45426;
+    --route: #5eead4;
+    --route-soft: #5eead44a;
+
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    padding-inline: 20px;
+    padding-block: 28px 72px;
+  }
+
+  a { color: var(--route); }
+
+  .site-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 22px;
+  }
+  .site-back:hover { color: var(--route); }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  /* ---------- header ---------- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--route);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--route);
+    box-shadow: 0 0 0 3px var(--route-soft);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2rem, 4.2vw, 2.9rem);
+    line-height: 1.05;
+    margin: 8px 0 0;
+    text-wrap: balance;
+  }
+
+  .tagline {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 58ch;
+    margin: 10px 0 0;
+    line-height: 1.55;
+  }
+
+  .sample-note {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    max-width: fit-content;
+  }
+  .sample-note svg { flex: none; margin-top: 2px; color: var(--accent); }
+
+  /* ---------- layout ---------- */
+  .explorer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  @media (min-width: 880px) {
+    .explorer { grid-template-columns: 1fr 360px; }
+  }
+
+  /* ---------- map card ---------- */
+  .map-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  .map-stage {
+    position: relative;
+    aspect-ratio: 2 / 1.08;
+    overflow: hidden;
+    border-radius: 10px;
+    background:
+      radial-gradient(circle at 30% 20%, #14224222 0, transparent 60%),
+      var(--bg-map);
+    background-image:
+      radial-gradient(var(--dot) 1px, transparent 1.4px);
+    background-size: 20px 20px;
+    background-position: 0 0;
+    cursor: default;
+  }
+
+  .map-inner {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 50%;
+    transform: scale(1);
+    transition: transform 650ms cubic-bezier(.16,1,.3,1);
+  }
+
+  .map-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .route-line {
+    fill: none;
+    stroke: var(--route);
+    stroke-width: 1.1;
+    stroke-dasharray: 1 5;
+    stroke-linecap: round;
+    opacity: 0.55;
+  }
+
+  .map-stage.is-zoomed .route-line { opacity: 0.2; }
+
+  .pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: inherit;
+    font-family: var(--font-body);
+  }
+
+  .pin-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+    transition: transform 220ms ease, box-shadow 220ms ease;
+  }
+  .pin:hover .pin-dot,
+  .pin:focus-visible .pin-dot { transform: scale(1.25); }
+  .pin:focus-visible { outline: none; }
+  .pin:focus-visible .pin-dot { box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 6px var(--accent); }
+
+  .pin-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    background: #0a0f1cd9;
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 999px;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 160ms ease, transform 160ms ease;
+    pointer-events: none;
+  }
+  .pin:hover .pin-label,
+  .pin:focus-visible .pin-label,
+  .pin.is-active .pin-label { opacity: 1; transform: translateY(0); }
+
+  .pin.is-active .pin-dot {
+    background: var(--route);
+    box-shadow: 0 0 0 5px var(--route-soft);
+    transform: scale(1.35);
+  }
+
+  .map-stage.is-zoomed .pin:not(.is-active) { opacity: 0.35; }
+
+  .pin.is-home .pin-dot {
+    background: var(--text);
+    border-radius: 3px;
+    width: 9px; height: 9px;
+    box-shadow: 0 0 0 4px #eef1f822;
+  }
+
+  .map-hint {
+    margin-top: 10px;
+    padding: 0 4px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- detail panel ---------- */
+  .detail-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-empty {
+    margin: auto;
+    text-align: center;
+    color: var(--text-faint);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 10px;
+  }
+  .detail-empty svg { color: var(--text-faint); }
+  .detail-empty p { margin: 0; font-size: 0.88rem; max-width: 26ch; line-height: 1.5; }
+
+  .detail-content { display: none; flex-direction: column; gap: 16px; }
+  .detail-content.is-visible { display: flex; }
+
+  .detail-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .detail-region {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+
+  .detail-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.15;
+  }
+
+  .close-btn {
+    flex: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .close-btn:hover { color: var(--text); border-color: var(--text-faint); }
+  .close-btn:focus-visible { outline: 2px solid var(--route); outline-offset: 2px; }
+
+  .detail-dates {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .photo-placeholder {
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    border: 1px dashed #ffffff2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #ffffffb0;
+  }
+  .photo-placeholder svg { opacity: 0.85; }
+  .photo-placeholder span {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.03em;
+    opacity: 0.85;
+  }
+
+  .detail-blurb {
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 18px;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    margin-top: 2px;
+  }
+  .stat dt {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    margin: 0 0 2px;
+  }
+  .stat dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+
+  .back-link {
+    background: none;
+    border: none;
+    color: var(--route);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    align-self: flex-start;
+  }
+  .back-link:hover { text-decoration: underline; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map-inner { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="site-back" href="index.html">&larr; Back to portfolio</a>
+
+<div class="page">
+
+  <header>
+    <p class="eyebrow">Hobbies &mdash; Travel</p>
+    <h1>Everywhere I've flown a camera</h1>
+    <p class="tagline">Click a pin to zoom into the trip &mdash; a few photos, what I was doing there, and how far it was from home.</p>
+    <div class="sample-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span>This is a working demo with 5 sample trips and placeholder photos &mdash; swap in your own itinerary, images, and notes.</span>
+    </div>
+  </header>
+
+  <div class="explorer">
+
+    <div class="map-card">
+      <div class="map-stage" id="mapStage">
+        <div class="map-inner" id="mapInner">
+          <svg class="map-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g id="routeLines"></g>
+          </svg>
+          <div id="pinLayer"></div>
+        </div>
+      </div>
+      <p class="map-hint">Dashed lines trace each trip back to Los Angeles &middot; scroll or resize to see it reflow</p>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-empty" id="detailEmpty">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3zM9 7v13M15 4v13"/></svg>
+        <p>Select a destination on the map to see photos, notes, and trip details.</p>
+      </div>
+      <div class="detail-content" id="detailContent">
+        <div class="detail-top">
+          <div>
+            <p class="detail-region" id="detailRegion"></p>
+            <h2 class="detail-name" id="detailName"></h2>
+          </div>
+          <button class="close-btn" id="closeBtn" aria-label="Close and return to map">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <p class="detail-dates" id="detailDates"></p>
+        <div class="photo-grid" id="photoGrid"></div>
+        <p class="detail-blurb" id="detailBlurb"></p>
+        <div class="tag-row" id="tagRow"></div>
+        <dl class="stat-row">
+          <div class="stat">
+            <dt>Distance from home</dt>
+            <dd id="statDistance"></dd>
+          </div>
+          <div class="stat">
+            <dt>Roughly</dt>
+            <dd id="statFlight"></dd>
+          </div>
+        </dl>
+        <button class="back-link" id="backLink">&larr; Back to full map</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Home base + 5 sample destinations. lat/lon are used to place pins on an
+  // equirectangular 1000x500 projection: x = (lon+180)/360*1000, y = (90-lat)/180*500
+  var HOME = { name: "Los Angeles", lat: 34.05, lon: -118.24 };
+
+  var DESTINATIONS = [
+    {
+      id: "tokyo",
+      name: "Tokyo",
+      region: "Japan · East Asia",
+      lat: 35.68, lon: 139.69,
+      dates: "Mar 14–22, 2025",
+      distanceKm: 8815,
+      flightTime: "≈ 11.5 hr direct",
+      tags: ["City", "Food", "Trains"],
+      blurb: "A week bouncing between Shinjuku's neon and the quiet back streets of Yanaka. Best meal of the trip was a six-seat ramen counter with no sign out front.",
+      hue: 210
+    },
+    {
+      id: "reykjavik",
+      name: "Reykjavík",
+      region: "Iceland · North Atlantic",
+      lat: 64.15, lon: -21.94,
+      dates: "Sep 2–9, 2024",
+      distanceKm: 7800,
+      flightTime: "≈ 9 hr with a layover",
+      tags: ["Road trip", "Aurora", "Hot springs"],
+      blurb: "Rented a car and circled the south coast chasing waterfalls by day and the aurora forecast by night. Caught a faint green band over Vík on the last clear evening.",
+      hue: 265
+    },
+    {
+      id: "patagonia",
+      name: "El Chaltén",
+      region: "Argentina · Patagonia",
+      lat: -49.33, lon: -72.88,
+      dates: "Jan 6–16, 2024",
+      distanceKm: 9700,
+      flightTime: "≈ 14 hr, two legs",
+      tags: ["Hiking", "Mountains", "Camping"],
+      blurb: "Three days of hiking to Laguna de los Tres for a clear-sky view of Fitz Roy, then a slower week exploring the smaller trails nobody else was on.",
+      hue: 35
+    },
+    {
+      id: "marrakech",
+      name: "Marrakech",
+      region: "Morocco · North Africa",
+      lat: 31.63, lon: -7.99,
+      dates: "Nov 18–25, 2023",
+      distanceKm: 9680,
+      flightTime: "≈ 15 hr, two legs",
+      tags: ["Markets", "Architecture", "Desert"],
+      blurb: "Got pleasantly lost in the medina for an entire afternoon, then spent two nights out past the Atlas foothills under a genuinely dark sky.",
+      hue: 15
+    },
+    {
+      id: "queenstown",
+      name: "Queenstown",
+      region: "New Zealand · South Island",
+      lat: -45.03, lon: 168.66,
+      dates: "Jul 3–14, 2023",
+      distanceKm: 10850,
+      flightTime: "≈ 15.5 hr direct",
+      tags: ["Hiking", "Lakes", "Winter"],
+      blurb: "Went in the middle of southern-hemisphere winter on purpose — empty trails, snow on the Remarkables, and a lake that never fully froze.",
+      hue: 190
+    }
+  ];
+
+  function project(lat, lon) {
+    return {
+      x: (lon + 180) / 360 * 1000,
+      y: (90 - lat) / 180 * 500
+    };
+  }
+
+  var homePos = project(HOME.lat, HOME.lon);
+
+  var pinLayer = document.getElementById("pinLayer");
+  var routeLines = document.getElementById("routeLines");
+  var mapStage = document.getElementById("mapStage");
+  var mapInner = document.getElementById("mapInner");
+
+  var detailEmpty = document.getElementById("detailEmpty");
+  var detailContent = document.getElementById("detailContent");
+  var detailRegion = document.getElementById("detailRegion");
+  var detailName = document.getElementById("detailName");
+  var detailDates = document.getElementById("detailDates");
+  var detailBlurb = document.getElementById("detailBlurb");
+  var photoGrid = document.getElementById("photoGrid");
+  var tagRow = document.getElementById("tagRow");
+  var statDistance = document.getElementById("statDistance");
+  var statFlight = document.getElementById("statFlight");
+
+  var pinEls = {};
+  var activeId = null;
+
+  // Home pin
+  var homePin = document.createElement("div");
+  homePin.className = "pin is-home";
+  homePin.style.left = homePos.x / 10 + "%";
+  homePin.style.top = homePos.y / 5 + "%";
+  homePin.innerHTML = '<span class="pin-dot"></span><span class="pin-label">Home</span>';
+  pinLayer.appendChild(homePin);
+
+  DESTINATIONS.forEach(function (dest) {
+    var pos = project(dest.lat, dest.lon);
+    dest._pos = pos;
+
+    // dashed route line, home -> destination, arced via a quadratic curve
+    var midX = (homePos.x + pos.x) / 2;
+    var midY = Math.min(homePos.y, pos.y) - 40;
+    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("class", "route-line");
+    path.setAttribute("d", "M " + homePos.x + " " + homePos.y + " Q " + midX + " " + midY + " " + pos.x + " " + pos.y);
+    routeLines.appendChild(path);
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pin";
+    btn.style.left = pos.x / 10 + "%";
+    btn.style.top = pos.y / 5 + "%";
+    btn.setAttribute("aria-pressed", "false");
+    btn.innerHTML = '<span class="pin-dot"></span><span class="pin-label">' + dest.name + "</span>";
+    btn.addEventListener("click", function () { selectDestination(dest.id); });
+    pinLayer.appendChild(btn);
+    pinEls[dest.id] = btn;
+  });
+
+  function findDest(id) {
+    for (var i = 0; i < DESTINATIONS.length; i++) {
+      if (DESTINATIONS[i].id === id) return DESTINATIONS[i];
+    }
+    return null;
+  }
+
+  function selectDestination(id) {
+    var dest = findDest(id);
+    if (!dest) return;
+    activeId = id;
+
+    Object.keys(pinEls).forEach(function (key) {
+      var isActive = key === id;
+      pinEls[key].classList.toggle("is-active", isActive);
+      pinEls[key].setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+
+    mapStage.classList.add("is-zoomed");
+    mapInner.style.transformOrigin = (dest._pos.x / 10) + "% " + (dest._pos.y / 5) + "%";
+    mapInner.style.transform = "scale(2.3)";
+
+    detailRegion.textContent = dest.region;
+    detailName.textContent = dest.name;
+    detailDates.textContent = dest.dates;
+    detailBlurb.textContent = dest.blurb;
+    statDistance.textContent = dest.distanceKm.toLocaleString() + " km";
+    statFlight.textContent = dest.flightTime;
+
+    photoGrid.innerHTML = "";
+    for (var i = 0; i < 3; i++) {
+      var ph = document.createElement("div");
+      ph.className = "photo-placeholder";
+      ph.style.background = "linear-gradient(160deg, hsl(" + dest.hue + " 45% 20%), hsl(" + dest.hue + " 35% 12%))";
+      ph.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><span>Sample photo</span>';
+      photoGrid.appendChild(ph);
+    }
+
+    tagRow.innerHTML = "";
+    dest.tags.forEach(function (t) {
+      var span = document.createElement("span");
+      span.className = "tag";
+      span.textContent = t;
+      tagRow.appendChild(span);
+    });
+
+    detailEmpty.style.display = "none";
+    detailContent.classList.add("is-visible");
+  }
+
+  function clearSelection() {
+    activeId = null;
+    Object.keys(pinEls).forEach(function (key) {
+      pinEls[key].classList.remove("is-active");
+      pinEls[key].setAttribute("aria-pressed", "false");
+    });
+    mapStage.classList.remove("is-zoomed");
+    mapInner.style.transform = "scale(1)";
+    detailContent.classList.remove("is-visible");
+    detailEmpty.style.display = "flex";
+  }
+
+  document.getElementById("closeBtn").addEventListener("click", clearSelection);
+  document.getElementById("backLink").addEventListener("click", clearSelection);
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && activeId) clearSelection();
+  });
+})();
+</script>
+</body>
+</html>
