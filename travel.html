@@ -4,11 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Travel | Timothy Cho</title>
-<meta name="description" content="An interactive map of places Timothy Cho has traveled — click a pin to zoom in and see photos and notes." />
+<meta name="description" content="An interactive map of places Timothy Cho has traveled — pan, zoom, and click a pin to see photos and notes." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 
 <style>
   :root {
@@ -18,7 +21,9 @@
     --panel: #121a2c;
     --panel-2: #16203a;
     --border: #223055;
-    --dot: #2a3860;
+    --land: #1a2542;
+    --land-border: #2c3c68;
+    --graticule: #1c2847;
     --text: #eef1f8;
     --text-muted: #8fa0c0;
     --text-faint: #5c6c8f;
@@ -136,107 +141,106 @@
     padding: 14px;
   }
 
+  .map-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .zoom-btn {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .zoom-btn:hover { color: var(--text); border-color: var(--route); }
+  .zoom-btn:focus-visible { outline: 2px solid var(--route); outline-offset: 1px; }
+  .zoom-btn.is-reset { width: auto; padding: 0 10px; font-family: var(--font-body); font-size: 0.72rem; font-weight: 600; }
+
   .map-stage {
     position: relative;
-    aspect-ratio: 2 / 1.08;
+    aspect-ratio: 960 / 500;
     overflow: hidden;
     border-radius: 10px;
-    background:
-      radial-gradient(circle at 30% 20%, #14224222 0, transparent 60%),
-      var(--bg-map);
-    background-image:
-      radial-gradient(var(--dot) 1px, transparent 1.4px);
-    background-size: 20px 20px;
-    background-position: 0 0;
-    cursor: default;
+    background: var(--bg-map);
+    touch-action: none;
   }
 
-  .map-inner {
-    position: absolute;
-    inset: 0;
-    transform-origin: 50% 50%;
-    transform: scale(1);
-    transition: transform 650ms cubic-bezier(.16,1,.3,1);
-  }
-
-  .map-svg {
+  .map-stage svg {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     display: block;
+    cursor: grab;
   }
+  .map-stage svg:active { cursor: grabbing; }
+
+  .ocean { fill: var(--bg-map); }
+  .graticule { fill: none; stroke: var(--graticule); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .country { fill: var(--land); stroke: var(--land-border); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
   .route-line {
     fill: none;
     stroke: var(--route);
-    stroke-width: 1.1;
-    stroke-dasharray: 1 5;
+    stroke-width: 1.2;
+    stroke-dasharray: 1 4.5;
     stroke-linecap: round;
-    opacity: 0.5;
+    opacity: 0.55;
+    vector-effect: non-scaling-stroke;
   }
+  .map-stage.is-zoomed .route-line { opacity: 0.18; }
 
-  .map-stage.is-zoomed .route-line { opacity: 0.15; }
-
-  .pin {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    background: none;
-    border: none;
-    padding: 4px;
+  .pin-inner {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 180ms ease;
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    color: inherit;
-    font-family: var(--font-body);
-    z-index: 1;
   }
-  .pin.is-active { z-index: 2; }
+  .pin:hover .pin-inner,
+  .pin:focus-visible .pin-inner { transform: scale(1.35); }
+  .pin:focus-visible { outline: none; }
 
   .pin-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-    transition: transform 220ms ease, box-shadow 220ms ease;
+    fill: var(--accent);
+    stroke: var(--accent-soft);
+    stroke-width: 5;
   }
-  .pin:hover .pin-dot,
-  .pin:focus-visible .pin-dot { transform: scale(1.3); }
-  .pin:focus-visible { outline: none; }
-  .pin:focus-visible .pin-dot { box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 5px var(--accent); }
-
   .pin-label {
-    font-size: 0.66rem;
-    font-weight: 600;
-    white-space: nowrap;
-    background: #0a0f1cd9;
-    border: 1px solid var(--border);
-    padding: 2px 7px;
-    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 9.5px;
+    font-weight: 700;
+    fill: var(--text);
+    stroke: #0a0f1c;
+    stroke-width: 3px;
+    paint-order: stroke;
     opacity: 0;
-    transform: translateY(-2px);
-    transition: opacity 160ms ease, transform 160ms ease;
+    transition: opacity 160ms ease;
     pointer-events: none;
   }
   .pin:hover .pin-label,
   .pin:focus-visible .pin-label,
-  .pin.is-active .pin-label { opacity: 1; transform: translateY(0); }
+  .pin.is-active .pin-label { opacity: 1; }
 
   .pin.is-active .pin-dot {
-    background: var(--route);
-    box-shadow: 0 0 0 4px var(--route-soft);
-    transform: scale(1.4);
+    fill: var(--route);
+    stroke: var(--route-soft);
   }
+  .pin.is-active .pin-inner { transform: scale(1.5); }
 
-  .map-stage.is-zoomed .pin:not(.is-active) { opacity: 0.3; }
+  .map-stage.is-zoomed .pin:not(.is-active) { opacity: 0.32; }
 
   .pin.is-home .pin-dot {
-    background: var(--text);
-    border-radius: 3px;
-    width: 8px; height: 8px;
-    box-shadow: 0 0 0 3px #eef1f822;
+    fill: var(--text);
+    stroke: #eef1f822;
   }
 
   .map-hint {
@@ -432,7 +436,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .map-inner { transition: none; }
+    .pin-inner { transition: none; }
   }
 </style>
 </head>
@@ -445,7 +449,7 @@
   <header>
     <p class="eyebrow">Hobbies &mdash; Travel</p>
     <h1>Where I've been</h1>
-    <p class="tagline">Thirteen trips so far &mdash; mission trips, an internship abroad, and a few just for the adventure. Click a pin to zoom in.</p>
+    <p class="tagline">Thirteen trips so far &mdash; mission trips, an internship abroad, and a few just for the adventure. Scroll or drag to explore the map, or click a pin to zoom straight in.</p>
     <div class="sample-note">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
       <span>Photos are on the way &mdash; I'll drop them in from my phone soon. Everything else here is from the real trips.</span>
@@ -455,15 +459,23 @@
   <div class="explorer">
 
     <div class="map-card">
-      <div class="map-stage" id="mapStage">
-        <div class="map-inner" id="mapInner">
-          <svg class="map-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-            <g id="routeLines"></g>
-          </svg>
-          <div id="pinLayer"></div>
-        </div>
+      <div class="map-toolbar">
+        <button class="zoom-btn is-reset" id="resetZoomBtn" type="button">Reset view</button>
+        <button class="zoom-btn" id="zoomOutBtn" type="button" aria-label="Zoom out">&minus;</button>
+        <button class="zoom-btn" id="zoomInBtn" type="button" aria-label="Zoom in">&plus;</button>
       </div>
-      <p class="map-hint">Dashed lines trace each trip back to Los Angeles &middot; a few nearby pins are nudged apart so every one stays clickable</p>
+      <div class="map-stage" id="mapStage">
+        <svg id="worldSvg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
+          <path class="ocean" id="oceanPath"></path>
+          <g id="zoomG">
+            <path class="graticule" id="graticulePath"></path>
+            <g id="countries"></g>
+            <g id="routes"></g>
+          </g>
+          <g id="markers"></g>
+        </svg>
+      </div>
+      <p class="map-hint">Real coordinates, real map &middot; scroll/pinch or drag to zoom and pan &middot; click a pin (or the list below) to jump to a trip</p>
     </div>
 
     <div class="detail-card">
@@ -502,7 +514,7 @@
   </div>
 
   <div class="map-card">
-    <p class="map-hint" style="margin-top:0 0 10px;">Or jump straight to a trip</p>
+    <p class="map-hint" style="margin:0 0 10px;">Or jump straight to a trip</p>
     <div class="trip-list" id="tripList"></div>
   </div>
 
@@ -512,230 +524,203 @@
 (function () {
   "use strict";
 
-  // Home base + real destinations. lat/lon are used to place pins on an
-  // equirectangular 1000x500 projection: x = (lon+180)/360*1000, y = (90-lat)/180*500
+  var WIDTH = 960, HEIGHT = 500;
   var HOME = { name: "Los Angeles", lat: 34.05, lon: -118.24 };
 
   var DESTINATIONS = [
-    {
-      id: "tokyo",
-      name: "Tokyo",
-      region: "Japan · Kantō",
-      lat: 35.68, lon: 139.69,
-      dates: "Aug 2026",
-      distanceKm: 8815,
-      flightTime: "≈ 11.5 hr direct",
+    { id: "tokyo", name: "Tokyo", region: "Japan · Kantō", lat: 35.68, lon: 139.69,
+      dates: "Aug 2026", distanceKm: 8815, flightTime: "≈ 11.5 hr direct",
       tags: ["Friends", "Food", "Shopping"],
       blurb: "Two weeks with Sam and Caleb, ricocheting between Shinjuku, Shibuya, and Ginza — nonstop shopping, sushi, and the best ramen of the trip at Ichiran.",
-      hue: 210
-    },
-    {
-      id: "seoul",
-      name: "Seoul",
-      region: "South Korea · Seoul Capital Area",
-      lat: 37.57, lon: 126.98,
-      dates: "Aug 2026",
-      distanceKm: 9580,
-      flightTime: "≈ 13 hr direct",
+      hue: 210 },
+    { id: "seoul", name: "Seoul", region: "South Korea · Seoul Capital Area", lat: 37.57, lon: 126.98,
+      dates: "Aug 2026", distanceKm: 9580, flightTime: "≈ 13 hr direct",
       tags: ["Layover", "Food", "Friends"],
       blurb: "A 16-hour layover turned into a full day with David: a gaming café, some shopping, and Korean BBQ before the flight back out.",
-      hue: 340
-    },
-    {
-      id: "clark",
-      name: "Clark City",
-      region: "Philippines · Central Luzon",
-      lat: 15.19, lon: 120.57,
-      dates: "Mar 2026",
-      distanceKm: 11740,
-      flightTime: "≈ 16 hr, one stop",
+      hue: 340 },
+    { id: "clark", name: "Clark City", region: "Philippines · Central Luzon", lat: 15.19, lon: 120.57,
+      dates: "Mar 2026", distanceKm: 11740, flightTime: "≈ 16 hr, one stop",
       tags: ["Missions", "Culture", "Food"],
       blurb: "Shared the Gospel with kids and adults across the city, mostly from Catholic backgrounds — came away with a real appreciation for Filipino culture and food.",
-      hue: 45
-    },
-    {
-      id: "jerusalem",
-      name: "Jerusalem",
-      region: "Israel · Judean Hills",
-      lat: 31.78, lon: 35.22,
-      dates: "Aug 2023",
-      distanceKm: 12240,
-      flightTime: "≈ 18 hr, one stop",
+      hue: 45 },
+    { id: "jerusalem", name: "Jerusalem", region: "Israel · Judean Hills", lat: 31.78, lon: 35.22,
+      dates: "Aug 2023", distanceKm: 12240, flightTime: "≈ 18 hr, one stop",
       tags: ["Missions", "History", "Holy Land"],
       blurb: "Shared the Gospel with the Jewish community and toured the Western Wall, the Sea of Galilee, and the Dead Sea.",
-      hue: 265
-    },
-    {
-      id: "istanbul",
-      name: "Istanbul",
-      region: "Türkiye · Marmara",
-      lat: 41.01, lon: 28.98,
-      dates: "Aug 2023 & Aug 2025",
-      distanceKm: 11050,
-      flightTime: "≈ 13.5 hr direct",
+      hue: 265 },
+    { id: "istanbul", name: "Istanbul", region: "Türkiye · Marmara", lat: 41.01, lon: 28.98,
+      dates: "Aug 2023 & Aug 2025", distanceKm: 11050, flightTime: "≈ 13.5 hr direct",
       tags: ["Missions", "Culture", "Language"],
       blurb: "Shared the Gospel with locals across two separate trips, picking up pieces of the language, food, and culture along the way.",
-      hue: 15
-    },
-    {
-      id: "adana",
-      name: "Adana",
-      region: "Türkiye · Mediterranean Coast",
-      lat: 37.00, lon: 35.32,
-      dates: "Aug 2025",
-      distanceKm: 11660,
-      flightTime: "≈ 16 hr, one stop",
+      hue: 15 },
+    { id: "adana", name: "Adana", region: "Türkiye · Mediterranean Coast", lat: 37.00, lon: 35.32,
+      dates: "Aug 2025", distanceKm: 11660, flightTime: "≈ 16 hr, one stop",
       tags: ["Missions", "Culture"],
       blurb: "More outreach in southern Türkiye, sharing the Gospel with people across the city.",
-      hue: 5
-    },
-    {
-      id: "cappadocia",
-      name: "Cappadocia",
-      region: "Türkiye · Central Anatolia",
-      lat: 38.64, lon: 34.83,
-      dates: "Aug 2025",
-      distanceKm: 11490,
-      flightTime: "≈ 17 hr, one stop",
+      hue: 5 },
+    { id: "cappadocia", name: "Cappadocia", region: "Türkiye · Central Anatolia", lat: 38.64, lon: 34.83,
+      dates: "Aug 2025", distanceKm: 11490, flightTime: "≈ 17 hr, one stop",
       tags: ["Hot air balloon", "Friends", "Sunrise"],
       blurb: "Flew a hot air balloon over the valleys at sunrise with friends — exactly as surreal as it looks in photos.",
-      hue: 35
-    },
-    {
-      id: "sliven",
-      name: "Sliven",
-      region: "Bulgaria · Balkan Mountains",
-      lat: 42.68, lon: 26.33,
-      dates: "Aug 2025",
-      distanceKm: 10760,
-      flightTime: "≈ 17 hr, one stop",
+      hue: 35 },
+    { id: "sliven", name: "Sliven", region: "Bulgaria · Balkan Mountains", lat: 42.68, lon: 26.33,
+      dates: "Aug 2025", distanceKm: 10760, flightTime: "≈ 17 hr, one stop",
       tags: ["Church", "Hiking", "Mountains"],
       blurb: "Supported a local church and spent free time hiking the mountains outside the city.",
-      hue: 150
-    },
-    {
-      id: "barcelona",
-      name: "Barcelona",
-      region: "Spain · Catalonia",
-      lat: 41.39, lon: 2.17,
-      dates: "Jun–Aug 2026",
-      distanceKm: 9670,
-      flightTime: "≈ 11.5 hr direct",
+      hue: 150 },
+    { id: "barcelona", name: "Barcelona", region: "Spain · Catalonia", lat: 41.39, lon: 2.17,
+      dates: "Jun–Aug 2026", distanceKm: 9670, flightTime: "≈ 11.5 hr direct",
       tags: ["Internship", "Cooking", "Friends"],
       blurb: "Interned at an engineering company for two months — practiced Spanish, learned to cook paella, and made friendships that outlasted the internship.",
-      hue: 20
-    },
-    {
-      id: "venice",
-      name: "Venice",
-      region: "Italy · Veneto",
-      lat: 45.44, lon: 12.32,
-      dates: "Jul 2026",
-      distanceKm: 9880,
-      flightTime: "≈ 14 hr, one stop",
+      hue: 20 },
+    { id: "venice", name: "Venice", region: "Italy · Veneto", lat: 45.44, lon: 12.32,
+      dates: "Jul 2026", distanceKm: 9880, flightTime: "≈ 14 hr, one stop",
       tags: ["Canals", "Weekend trip", "Friends"],
       blurb: "A weekend off from the Barcelona internship with Joel, exploring the canals before heading up to the Dolomites.",
-      hue: 195
-    },
-    {
-      id: "cortina",
-      name: "Cortina",
-      region: "Italy · Dolomites",
-      lat: 46.54, lon: 12.14,
-      dates: "Jul 2026",
-      distanceKm: 9770,
-      flightTime: "≈ 14 hr, one stop + drive",
+      hue: 195 },
+    { id: "cortina", name: "Cortina", region: "Italy · Dolomites", lat: 46.54, lon: 12.14,
+      dates: "Jul 2026", distanceKm: 9770, flightTime: "≈ 14 hr, one stop + drive",
       tags: ["Hiking", "Mountains", "Pizza"],
       blurb: "Same weekend as Venice — hiked Lago di Sorapis and Tre Cime, played mini golf, ate real Italian pizza, and passed more cows than people.",
-      hue: 110
-    },
-    {
-      id: "paris",
-      name: "Paris",
-      region: "France · Île-de-France",
-      lat: 48.86, lon: 2.35,
-      dates: "Jul 2026",
-      distanceKm: 9100,
-      flightTime: "≈ 11 hr direct",
+      hue: 110 },
+    { id: "paris", name: "Paris", region: "France · Île-de-France", lat: 48.86, lon: 2.35,
+      dates: "Jul 2026", distanceKm: 9100, flightTime: "≈ 11 hr direct",
       tags: ["E-bikes", "Hostels", "Chance encounter"],
       blurb: "A different weekend off from Barcelona — biked the city on e-bikes, stayed in hostels, saw the Eiffel Tower, and randomly ran into Henry Golding by the river.",
-      hue: 320
-    },
-    {
-      id: "honolulu",
-      name: "Honolulu",
-      region: "Hawaii · Oʻahu",
-      lat: 21.31, lon: -157.86,
-      dates: "Jul 2025",
-      distanceKm: 4120,
-      flightTime: "≈ 5.5 hr direct",
+      hue: 320 },
+    { id: "honolulu", name: "Honolulu", region: "Hawaii · Oʻahu", lat: 21.31, lon: -157.86,
+      dates: "Jul 2025", distanceKm: 4120, flightTime: "≈ 5.5 hr direct",
       tags: ["Family", "Hiking", "Beach"],
       blurb: "First family trip with my mom, brother, his wife, and niece Celine — hiked the Koko Head Railway alone at 4am and made friends with the Uber driver, then fell for Lanikai Beach's water.",
-      hue: 185
-    }
+      hue: 185 }
   ];
 
-  function project(lat, lon) {
-    return {
-      x: (lon + 180) / 360 * 1000,
-      y: (90 - lat) / 180 * 500
-    };
-  }
+  var svg = d3.select("#worldSvg");
+  var zoomG = d3.select("#zoomG");
+  var markersLayer = d3.select("#markers");
+  var countriesG = d3.select("#countries");
+  var routesG = d3.select("#routes");
+  var mapStage = document.getElementById("mapStage");
 
-  // Push apart any pins that would otherwise sit on top of each other
-  // (several real destinations here are genuinely close together on a
-  // world-map scale, e.g. Istanbul/Adana/Cappadocia/Sliven/Jerusalem).
-  // This nudges pixel positions only -- distances shown in the detail
-  // panel are computed from the true lat/lon, not the nudged position.
-  function declutter(points, minDist, iterations) {
-    for (var iter = 0; iter < iterations; iter++) {
-      var moved = false;
-      for (var i = 0; i < points.length; i++) {
-        for (var j = i + 1; j < points.length; j++) {
-          var dx = points[j].x - points[i].x;
-          var dy = points[j].y - points[i].y;
-          var dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 0.001) {
-            points[i].x -= minDist * 0.15;
-            points[j].x += minDist * 0.15;
-            moved = true;
-            continue;
-          }
-          if (dist < minDist) {
-            var overlap = (minDist - dist) / 2;
-            var ux = dx / dist, uy = dy / dist;
-            points[i].x -= ux * overlap;
-            points[i].y -= uy * overlap;
-            points[j].x += ux * overlap;
-            points[j].y += uy * overlap;
-            moved = true;
-          }
-        }
-      }
-      if (!moved) break;
-    }
-    points.forEach(function (p) {
-      p.x = Math.max(25, Math.min(975, p.x));
-      p.y = Math.max(20, Math.min(480, p.y));
-    });
+  var projection = d3.geoNaturalEarth1().fitSize([WIDTH, HEIGHT], { type: "Sphere" });
+  var pathGen = d3.geoPath(projection);
+
+  d3.select("#oceanPath").attr("d", pathGen({ type: "Sphere" }));
+  d3.select("#graticulePath").attr("d", pathGen(d3.geoGraticule10()));
+
+  // Load real country outlines. Pins/zoom/interaction all work even if this
+  // fetch fails -- it only fills in the land shapes behind them.
+  fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+    .then(function (r) { return r.json(); })
+    .then(function (world) {
+      var countries = topojson.feature(world, world.objects.countries).features;
+      countriesG.selectAll("path")
+        .data(countries)
+        .enter()
+        .append("path")
+        .attr("class", "country")
+        .attr("d", pathGen);
+    })
+    .catch(function () { /* map still works without coastlines */ });
+
+  function project(lat, lon) {
+    var p = projection([lon, lat]);
+    return p ? { x: p[0], y: p[1] } : { x: WIDTH / 2, y: HEIGHT / 2 };
   }
 
   var homePos = project(HOME.lat, HOME.lon);
-
   DESTINATIONS.forEach(function (dest) {
-    var pos = project(dest.lat, dest.lon);
-    dest._truePos = pos;
-    dest._pos = { x: pos.x, y: pos.y };
+    dest._pos = project(dest.lat, dest.lon);
   });
 
-  declutter(DESTINATIONS.map(function (d) { return d._pos; }), 42, 400);
+  // Route lines (drawn once, live inside the zoomable group so they pan/zoom with the map)
+  DESTINATIONS.forEach(function (dest) {
+    var pos = dest._pos;
+    var midX = (homePos.x + pos.x) / 2;
+    var midY = Math.min(homePos.y, pos.y) - 55;
+    routesG.append("path")
+      .attr("class", "route-line")
+      .attr("d", "M " + homePos.x + " " + homePos.y + " Q " + midX + " " + midY + " " + pos.x + " " + pos.y);
+  });
 
-  var pinLayer = document.getElementById("pinLayer");
-  var routeLines = document.getElementById("routeLines");
-  var mapStage = document.getElementById("mapStage");
-  var mapInner = document.getElementById("mapInner");
+  // Markers live in their OWN top-level group (not the zoomed one) so their
+  // on-screen size stays constant; only their position is recomputed from
+  // the zoom transform on every tick, which is what lets close-together
+  // pins spread apart (in real screen pixels) as you zoom in.
+  function makePin(x0, y0, opts) {
+    var g = markersLayer.append("g")
+      .attr("class", "pin" + (opts.home ? " is-home" : ""))
+      .attr("transform", "translate(" + x0 + "," + y0 + ")")
+      .attr("tabindex", opts.home ? null : "0")
+      .attr("role", opts.home ? null : "button")
+      .attr("aria-label", opts.home ? null : ("View " + opts.label))
+      .datum({ x0: x0, y0: y0 });
+
+    var inner = g.append("g").attr("class", "pin-inner");
+    inner.append("circle").attr("class", "pin-dot").attr("r", opts.home ? 4 : 5.5);
+    g.append("text")
+      .attr("class", "pin-label")
+      .attr("y", -12)
+      .attr("text-anchor", "middle")
+      .text(opts.label);
+
+    return g;
+  }
+
+  var homeG = makePin(homePos.x, homePos.y, { home: true, label: "Home" });
+
+  var pinEls = {};
+  DESTINATIONS.forEach(function (dest) {
+    var g = makePin(dest._pos.x, dest._pos.y, { label: dest.name });
+    g.on("click", function () { selectDestination(dest.id); });
+    g.on("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        selectDestination(dest.id);
+      }
+    });
+    pinEls[dest.id] = g;
+  });
+
+  // ---------- zoom / pan ----------
+  var currentTransform = d3.zoomIdentity;
+
+  var zoom = d3.zoom()
+    .scaleExtent([1, 20])
+    .translateExtent([[0, 0], [WIDTH, HEIGHT]])
+    .on("zoom", zoomed);
+
+  svg.call(zoom);
+
+  function zoomed(event) {
+    currentTransform = event.transform;
+    zoomG.attr("transform", currentTransform);
+    markersLayer.selectAll(".pin").attr("transform", function (d) {
+      var p = currentTransform.apply([d.x0, d.y0]);
+      return "translate(" + p[0] + "," + p[1] + ")";
+    });
+  }
+
+  function flyTo(x0, y0, k) {
+    var target = d3.zoomIdentity
+      .translate(WIDTH / 2, HEIGHT / 2)
+      .scale(k)
+      .translate(-x0, -y0);
+    svg.transition().duration(700).ease(d3.easeCubicOut).call(zoom.transform, target);
+  }
+
+  document.getElementById("zoomInBtn").addEventListener("click", function () {
+    svg.transition().duration(300).call(zoom.scaleBy, 1.6);
+  });
+  document.getElementById("zoomOutBtn").addEventListener("click", function () {
+    svg.transition().duration(300).call(zoom.scaleBy, 1 / 1.6);
+  });
+  document.getElementById("resetZoomBtn").addEventListener("click", function () {
+    clearSelection();
+  });
+
+  // ---------- detail panel ----------
   var tripList = document.getElementById("tripList");
-
   var detailEmpty = document.getElementById("detailEmpty");
   var detailContent = document.getElementById("detailContent");
   var detailRegion = document.getElementById("detailRegion");
@@ -747,39 +732,9 @@
   var statDistance = document.getElementById("statDistance");
   var statFlight = document.getElementById("statFlight");
 
-  var pinEls = {};
   var activeId = null;
 
-  // Home pin
-  var homePin = document.createElement("div");
-  homePin.className = "pin is-home";
-  homePin.style.left = homePos.x / 10 + "%";
-  homePin.style.top = homePos.y / 5 + "%";
-  homePin.innerHTML = '<span class="pin-dot"></span><span class="pin-label">Home</span>';
-  pinLayer.appendChild(homePin);
-
   DESTINATIONS.forEach(function (dest) {
-    var pos = dest._pos;
-
-    // dashed route line, home -> destination's (nudged) pin position
-    var midX = (homePos.x + pos.x) / 2;
-    var midY = Math.min(homePos.y, pos.y) - 40;
-    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("class", "route-line");
-    path.setAttribute("d", "M " + homePos.x + " " + homePos.y + " Q " + midX + " " + midY + " " + pos.x + " " + pos.y);
-    routeLines.appendChild(path);
-
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "pin";
-    btn.style.left = pos.x / 10 + "%";
-    btn.style.top = pos.y / 5 + "%";
-    btn.setAttribute("aria-pressed", "false");
-    btn.innerHTML = '<span class="pin-dot"></span><span class="pin-label">' + dest.name + "</span>";
-    btn.addEventListener("click", function () { selectDestination(dest.id); });
-    pinLayer.appendChild(btn);
-    pinEls[dest.id] = btn;
-
     var chip = document.createElement("button");
     chip.type = "button";
     chip.className = "trip-chip";
@@ -801,14 +756,11 @@
     activeId = id;
 
     Object.keys(pinEls).forEach(function (key) {
-      var isActive = key === id;
-      pinEls[key].classList.toggle("is-active", isActive);
-      pinEls[key].setAttribute("aria-pressed", isActive ? "true" : "false");
+      pinEls[key].classed("is-active", key === id);
     });
 
     mapStage.classList.add("is-zoomed");
-    mapInner.style.transformOrigin = (dest._pos.x / 10) + "% " + (dest._pos.y / 5) + "%";
-    mapInner.style.transform = "scale(2.3)";
+    flyTo(dest._pos.x, dest._pos.y, 9);
 
     detailRegion.textContent = dest.region;
     detailName.textContent = dest.name;
@@ -842,11 +794,10 @@
   function clearSelection() {
     activeId = null;
     Object.keys(pinEls).forEach(function (key) {
-      pinEls[key].classList.remove("is-active");
-      pinEls[key].setAttribute("aria-pressed", "false");
+      pinEls[key].classed("is-active", false);
     });
     mapStage.classList.remove("is-zoomed");
-    mapInner.style.transform = "scale(1)";
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
     detailContent.classList.remove("is-visible");
     detailEmpty.style.display = "flex";
   }
