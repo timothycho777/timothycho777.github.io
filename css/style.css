@@ -354,6 +354,20 @@ section { padding: 4.5rem 0; }
 .about-card li { margin-bottom: 0.5rem; }
 .about-card li:last-child { margin-bottom: 0; }
 
+/* Side column: stacks the "Currently" card and the mini-game card */
+.about-side { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.game-frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 1;          /* matches the game's 600 x 200 canvas */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #f7f7f7;
+}
+.game-hint { margin: 0.8rem 0 0; font-size: 0.8rem; color: var(--ink-faint); line-height: 1.5; }
+.game-hint a { color: var(--orange); }
+
 /* ---------- Skills ---------- */
 .skills-grid {
   display: grid;
@@ -682,6 +696,7 @@ footer {
   .hero { grid-template-columns: 1fr; padding-top: 3.5rem; }
   .hero-visual { max-width: 420px; margin: 0 auto; }
   .about-grid { grid-template-columns: 1fr; }
+  .about-side { max-width: 480px; }
   .contact-card { grid-template-columns: 1fr; padding: 2.2rem 1.6rem; }
 }
 

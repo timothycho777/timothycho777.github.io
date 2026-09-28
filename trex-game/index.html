@@ -1,11 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pochacco Runner</title>
+  <style>
+    html, body { margin: 0; background: #f7f7f7; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      cursor: pointer;
+      touch-action: manipulation;   /* no double-tap zoom on phones */
+    }
+  </style>
 </head>
 <body>
-  <canvas id="game" width="600" height="200" style="border:1px solid black"></canvas>
+  <canvas id="game" width="600" height="200"></canvas>
   <script src="game.js"></script>
 </body>
 </html>
