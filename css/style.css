@@ -335,7 +335,7 @@ section { padding: 4.5rem 0; }
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
+  grid-template-columns: 1.1fr 0.9fr;
   gap: 3rem;
   align-items: start;
 }
@@ -361,7 +361,9 @@ section { padding: 4.5rem 0; }
   display: block;
   width: 100%;
   aspect-ratio: 3 / 1;          /* matches the game's 600 x 200 canvas */
-  border: 1px solid var(--border);
+  border: 0;                    /* an outline (below) avoids adding 2px that would make the game overflow */
+  outline: 1px solid var(--border);
+  outline-offset: -1px;
   border-radius: var(--radius-sm);
   background: #f7f7f7;
 }
