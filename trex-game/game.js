@@ -14,14 +14,14 @@ player.onerror = function () {
 // Player
 const GROUND_Y       = 170;   // y position of the ground line
 const GRAVITY        = 0.4;   // how fast he falls back down
-const JUMP_POWER     = 9;    // how hard he launches upward
+const JUMP_POWER     = 9;     // how hard he launches upward
 const PLAYER_X       = 50;    // how far from the left edge he stands
 const HITBOX_PADDING = 8;     // shrinks his hitbox so near-misses feel fair
 
 // Cacti
 const GAME_SPEED      = 3;              // how fast cacti move left (pixels per frame)
 const CACTUS_WIDTH    = 20;
-const CACTUS_HEIGHTS  = [30, 40];   // short, medium
+const CACTUS_HEIGHTS  = [30, 40];       // short, medium
 const MIN_SPAWN_GAP   = 90;             // fewest frames between cacti (1.5 seconds)
 const MAX_SPAWN_GAP   = 180;            // most frames between cacti (3 seconds)
 
@@ -83,6 +83,7 @@ function endGame() {
 let y = 0;                      // height above the ground (0 = standing on it)
 let velocity = 0;               // up/down speed (0 = standing still)
 let gameOver = false;
+let started = false;            // false until the first click / Space (shows the start screen)
 
 let cacti = [];                 // all cacti currently on screen
 let spawnTimer = 0;             // frames since the last cactus appeared
@@ -93,22 +94,36 @@ let highScore = Number(localStorage.getItem("trexHighScore")) || 0;   // 0 if no
 
 
 // ================= INPUT =================
+// One action for every kind of input: start, restart, or jump
+function pressAction() {
+  if (!started) {
+    started = true;                // first press starts the game
+  } else if (gameOver) {
+    resetGame();                   // after a crash, restart
+  } else if (y === 0) {
+    velocity = JUMP_POWER;         // only jump when on the ground (no double jumps)
+  }
+}
+
 document.addEventListener("keydown", function (e) {
   if (e.code === "Space") {
-    e.preventDefault();   // stops the page from scrolling
-
-    if (gameOver) {
-      resetGame();                 // Space restarts after a crash
-    } else if (y === 0) {
-      velocity = JUMP_POWER;       // only jump when on the ground (no double jumps)
-    }
+    e.preventDefault();            // stops the page from scrolling
+    pressAction();
   }
+});
+
+// Click or tap on the game also works (handy on phones).
+// Note: no preventDefault() here, because that would stop the browser from giving
+// the game keyboard focus, and then Space would not work inside the homepage box.
+canvas.addEventListener("pointerdown", function () {
+  window.focus();
+  pressAction();
 });
 
 
 // ================= UPDATE (the physics) =================
 function update() {
-  if (gameOver) return;   // freeze everything after a crash
+  if (!started || gameOver) return;   // wait for the first press; freeze after a crash
 
   // --- player physics ---
   y += velocity;          // move by current speed
@@ -156,7 +171,8 @@ function update() {
 
 // ================= DRAW =================
 function draw() {
-  ctx.clearRect(0, 0, 600, 200);   // wipe the previous frame
+  ctx.fillStyle = "#f7f7f7";       // light background (wipes the previous frame)
+  ctx.fillRect(0, 0, 600, 200);
 
   ctx.fillStyle = "#535353";
   ctx.fillRect(0, GROUND_Y, 600, 2);   // ground line
@@ -171,16 +187,22 @@ function draw() {
 
   // score, top right
   ctx.fillStyle = "#535353";
-  ctx.font = "16px monospace";
-  ctx.fillText("HI " + highScore + "   " + Math.floor(score), 430, 25);
+  ctx.font = "bold 22px monospace";
+  ctx.textAlign = "right";
+  ctx.fillText("HI " + highScore + "   " + Math.floor(score), 585, 32);
 
-  // game over message
-  if (gameOver) {
-    ctx.font = "20px monospace";
-    ctx.fillText("GAME OVER", 240, 95);
-    ctx.font = "14px monospace";
-    ctx.fillText("Press Space to restart", 208, 120);
+  // messages, centered on the canvas
+  ctx.textAlign = "center";
+  if (!started) {
+    ctx.font = "bold 24px monospace";
+    ctx.fillText("Click or press Space to start", 300, 100);
+  } else if (gameOver) {
+    ctx.font = "bold 30px monospace";
+    ctx.fillText("GAME OVER", 300, 90);
+    ctx.font = "18px monospace";
+    ctx.fillText("Click or press Space to restart", 300, 122);
   }
+  ctx.textAlign = "left";          // back to normal for the next frame
 }
 
 
