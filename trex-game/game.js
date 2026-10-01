@@ -12,7 +12,11 @@ cactusShortImg.src = "images/cactus-short.png";
 const cactusTallImg = new Image();
 cactusTallImg.src = "images/cactus-tall.png";
 
-const allImages = [player, cactusShortImg, cactusTallImg];
+// Desert floor tile (one canvas wide, repeats seamlessly)
+const floorImg = new Image();
+floorImg.src = "images/desert-floor.png";
+
+const allImages = [player, cactusShortImg, cactusTallImg, floorImg];
 allImages.forEach(function (img) {
   img.onerror = function () {
     console.log("IMAGE FAILED: check " + img.src);
@@ -80,6 +84,7 @@ function resetGame() {
   velocity = 0;
   jumpReleased = false;
   speed = START_SPEED;
+  groundX = 0;
   gameOver = false;
   cacti = [];
   spawnTimer = 0;
@@ -105,6 +110,7 @@ let y = 0;                      // height above the ground (0 = standing on it)
 let velocity = 0;               // up/down speed (0 = standing still)
 let jumpReleased = false;       // true once Space was let go during a jump (makes it a short hop)
 let speed = START_SPEED;        // how fast the cacti move left right now
+let groundX = 0;                // how far the desert floor has scrolled (0 up to the tile width)
 let gameOver = false;
 let gameOverAt = 0;             // when the last crash happened (ms)
 let started = false;            // false until the first click / Space (shows the start screen)
@@ -173,6 +179,7 @@ function update() {
 
   // --- speed: creeps up over time, like Chrome ---
   if (speed < MAX_SPEED) speed += ACCELERATION;
+  groundX = (groundX + speed) % floorImg.width;   // the floor scrolls at the same speed as the cacti
 
   // --- player physics ---
   y += velocity;          // move by current speed
@@ -231,8 +238,10 @@ function draw() {
   ctx.fillStyle = "#f7f7f7";       // light background (wipes the previous frame)
   ctx.fillRect(0, 0, 600, 200);
 
-  ctx.fillStyle = "#535353";
-  ctx.fillRect(0, GROUND_Y, 600, 2);   // ground line
+  // desert floor: two copies side by side, scrolling left (drawn first so everything stands on it)
+  const fx = Math.round(groundX);
+  ctx.drawImage(floorImg, -fx, GROUND_Y - 2);
+  ctx.drawImage(floorImg, floorImg.width - fx, GROUND_Y - 2);
 
   // cacti: pictures standing on the ground
   for (const c of cacti) {
