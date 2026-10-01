@@ -5,9 +5,19 @@ ctx.imageSmoothingEnabled = false;   // keeps pixel art crisp
 
 const player = new Image();
 player.src = "images/player.png";
-player.onerror = function () {
-  console.log("IMAGE FAILED: check images/player.png");
-};
+
+// Cactus pictures: one short, one tall (transparent PNGs)
+const cactusShortImg = new Image();
+cactusShortImg.src = "images/cactus-short.png";
+const cactusTallImg = new Image();
+cactusTallImg.src = "images/cactus-tall.png";
+
+const allImages = [player, cactusShortImg, cactusTallImg];
+allImages.forEach(function (img) {
+  img.onerror = function () {
+    console.log("IMAGE FAILED: check " + img.src);
+  };
+});
 
 
 // ================= SETTINGS =================
@@ -20,8 +30,8 @@ const HITBOX_PADDING = 8;     // shrinks his hitbox so near-misses feel fair
 
 // Cacti
 const GAME_SPEED      = 3;              // how fast cacti move left (pixels per frame)
-const CACTUS_WIDTH    = 20;
-const CACTUS_HEIGHTS  = [30, 40];       // short, medium
+const CACTUS_IMAGES   = [cactusShortImg, cactusTallImg];   // each spawn picks one at random
+const CACTUS_PADDING  = 4;              // shrinks each cactus hitbox (left, right, top) so near-misses feel fair
 const MIN_SPAWN_GAP   = 90;             // fewest frames between cacti (1.5 seconds)
 const MAX_SPAWN_GAP   = 180;            // most frames between cacti (3 seconds)
 
@@ -43,10 +53,10 @@ function hitsCactus(c) {
   const playerTop    = GROUND_Y - player.height - y + HITBOX_PADDING;
   const playerBottom = GROUND_Y - y;
 
-  // Cactus hitbox
-  const cactusLeft   = c.x;
-  const cactusRight  = c.x + c.width;
-  const cactusTop    = GROUND_Y - c.height;
+  // Cactus hitbox (slightly smaller than the picture)
+  const cactusLeft   = c.x + CACTUS_PADDING;
+  const cactusRight  = c.x + c.width - CACTUS_PADDING;
+  const cactusTop    = GROUND_Y - c.height + CACTUS_PADDING;
   const cactusBottom = GROUND_Y;
 
   // Overlap only if all four conditions are true
@@ -143,9 +153,9 @@ function update() {
   // 2. count frames, and add a new cactus at the right edge when it's time
   spawnTimer += 1;
   if (spawnTimer >= nextSpawn) {
-    // pick a random height from the list
-    const height = CACTUS_HEIGHTS[Math.floor(Math.random() * CACTUS_HEIGHTS.length)];
-    cacti.push({ x: canvas.width, width: CACTUS_WIDTH, height: height });
+    // pick a random cactus picture; its size comes from the picture itself
+    const img = CACTUS_IMAGES[Math.floor(Math.random() * CACTUS_IMAGES.length)];
+    cacti.push({ x: canvas.width, width: img.width, height: img.height, img: img });
     spawnTimer = 0;
     nextSpawn = randomGap();
   }
@@ -177,9 +187,9 @@ function draw() {
   ctx.fillStyle = "#535353";
   ctx.fillRect(0, GROUND_Y, 600, 2);   // ground line
 
-  // cacti: rectangles standing on the ground
+  // cacti: pictures standing on the ground
   for (const c of cacti) {
-    ctx.fillRect(c.x, GROUND_Y - c.height, c.width, c.height);
+    ctx.drawImage(c.img, Math.round(c.x), GROUND_Y - c.height);
   }
 
   // Pochacco: feet on the ground, lifted up by y when jumping
@@ -213,8 +223,20 @@ function loop() {
   requestAnimationFrame(loop);    // 3. call loop again next frame
 }
 
-player.onload = loop;             // start once the image has loaded
+// start once ALL pictures (Pochacco + both cacti) have loaded
+let imagesLeft = allImages.length;
+allImages.forEach(function (img) {
+  function done() {
+    imagesLeft -= 1;
+    if (imagesLeft === 0) loop();
+  }
+  if (img.complete && img.naturalWidth > 0) {
+    done();                       // already loaded (cached)
+  } else {
+    img.onload = done;
+  }
+});
 
 
 // ================= FUTURE STEPS =================
-// Extras: speed up over time, clouds, sound, better cactus art
+// Extras: speed up over time, clouds, sound

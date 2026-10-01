@@ -367,6 +367,7 @@ section { padding: 4.5rem 0; }
   border-radius: var(--radius-sm);
   background: #f7f7f7;
 }
+.game-note { margin: 0 0 0.9rem; font-size: 0.95rem; color: var(--ink-soft); line-height: 1.5; font-style: italic; }
 .game-hint { margin: 0.8rem 0 0; font-size: 0.8rem; color: var(--ink-faint); line-height: 1.5; }
 .game-hint a { color: var(--orange); }
 
