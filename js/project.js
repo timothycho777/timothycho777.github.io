@@ -124,6 +124,27 @@ function galleryHTML(project, heading) {
     </div>`;
 }
 
+/* Videos: media.videos = [{ src, poster?, caption, label? }]. Plays inline, no autoplay. */
+function videosHTML(project, heading) {
+  const vids = project.media && project.media.videos;
+  if (!vids || !vids.length) return '';
+  return `
+    <div class="proj-section">
+      <h3>${heading || 'Videos'}</h3>
+      <div class="proj-videos">
+        ${vids.map(v => `
+          <figure>
+            <video controls playsinline preload="metadata"${v.poster ? ` poster="${v.poster}"` : ''} aria-label="${escapeAttr(v.caption)}">
+              <source src="${v.src}" type="video/mp4">
+              Your browser can't play this video. <a href="${v.src}">Download it</a>.
+            </video>
+            <figcaption>${v.caption}</figcaption>
+          </figure>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
 function diagramHTML(project) {
   if (project.hidePageDiagram) return '';
   if (project.media && project.media.type === 'diagram') {
@@ -144,6 +165,7 @@ function areaHTML(sub, index, total) {
       ${tagsHTML(sub)}
       ${sectionsHTML(sub)}
       ${galleryHTML(sub, 'Photos & CAD')}
+      ${videosHTML(sub, 'Videos & Animations')}
     </section>`;
 }
 
@@ -205,6 +227,7 @@ function renderProject() {
     <div class="proj-body">
       ${sectionsHTML(project)}
       ${hasOwnPhotos ? galleryHTML(project, 'Photos') : ''}
+      ${videosHTML(project, 'Videos')}
     </div>
 
     ${subs.map((sub, i) => areaHTML(sub, i, subs.length)).join('')}

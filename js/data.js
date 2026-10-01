@@ -57,6 +57,8 @@ const CATEGORIES = ["All", "Robotics", "Mechanical Design"];
                   each is shown as its own area on the parent's project page
    isSubProject - true if this should NOT get its own card/page (it only appears
                   as an area on its parent's page)
+   media.videos - optional list of { src: "videos/x.mp4", poster?: "images/x.jpg", caption } shown
+                  in a Videos section on the project page (works with any media type)
    hidePageDiagram - true to skip the diagram on the project page (card still shows it)
    focus        - optional on a photo item: CSS object-position for cropped views
                   (cards and gallery tiles), e.g. "50% 0%" keeps the top of the photo

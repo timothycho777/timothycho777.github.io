@@ -654,6 +654,25 @@ section { padding: 4.5rem 0; }
 .proj-gallery img:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .proj-gallery figcaption { font-size: 0.82rem; color: var(--ink-faint); margin-top: 0.5rem; }
 
+/* Videos: same roomy grid as the photo gallery */
+.proj-videos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.4rem 1.1rem;
+  margin-top: 0.4rem;
+}
+.proj-videos figure { margin: 0; }
+.proj-videos video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  display: block;
+  background: #0b131b;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.proj-videos figcaption { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.5rem; }
+
 /* Separate areas for component write-ups (e.g. Snorlax + Bear Walker) */
 .proj-area {
   margin-top: 3.5rem;
