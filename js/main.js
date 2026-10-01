@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Main site logic: rendering, filtering, accordion detail panels,
-   lightbox, theme toggle, nav behavior, scroll reveal.
+   Home page logic: rendering, filtering, project cards (each links to its own
+   project.html page), theme toggle, nav behavior, scroll reveal.
    ========================================================================== */
 
 const ICONS = {
@@ -8,6 +8,7 @@ const ICONS = {
   wrench: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.77z"/></svg>`,
   bolt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   chip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/></svg>`,
+  arrowRight: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
   chevron: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
   mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
   linkedin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
@@ -17,15 +18,6 @@ const ICONS = {
   sun: `<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
   moon: `<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
   menu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
-};
-
-const SECTION_LABELS = {
-  problem: 'Problem / Motivation',
-  contribution: 'My Role & Contribution',
-  approach: 'Technical Approach',
-  challenges: 'Challenges & Solutions',
-  results: 'Results & Impact',
-  takeaways: 'Key Takeaways',
 };
 
 let activeFilter = 'All';
@@ -38,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderFilters();
   renderProjects();
   initHeroLinkage();
-  initLightbox();
   initScrollSpy();
   initRevealObserver();
 });
@@ -162,72 +153,11 @@ function mediaHTML(project) {
   return diagramSVG(project.media.key);
 }
 
-function detailSectionsHTML(project) {
-  const order = ['problem', 'contribution', 'approach', 'challenges', 'results', 'takeaways'];
-  return order
-    .filter(key => project.sections && project.sections[key])
-    .map(key => `
-      <div class="detail-section">
-        <h5>${SECTION_LABELS[key]}</h5>
-        <div>${project.sections[key]}</div>
-      </div>
-    `).join('');
-}
-
-function photosHTML(project) {
-  if (!project.media || project.media.type !== 'photos') return '';
-  return `
-    <div class="detail-section">
-      <h5>Photos</h5>
-      <div class="detail-photos">
-        ${project.media.items.map(img => `
-          <figure>
-            <img src="${img.src}" alt="${img.alt}" loading="lazy" data-lightbox="${img.src}" data-alt="${img.alt}">
-            <figcaption>${img.caption}</figcaption>
-          </figure>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function subProjectLinksHTML(project) {
-  if (!project.subProjects || !project.subProjects.length) return '';
-  const links = project.subProjects.map(id => {
-    const sub = PROJECTS.find(p => p.id === id);
-    if (!sub) return '';
-    return `<button class="sub-link" data-sub-toggle="${project.id}-${id}">${ICONS.external}${sub.name}</button>`;
-  }).join('');
-  return `
-    <div class="detail-section">
-      <h5>Component Write-ups</h5>
-      <p style="margin-bottom:0.6rem;">This entry consolidates two more detailed component write-ups:</p>
-      <div class="sub-links">${links}</div>
-      ${project.subProjects.map(id => subProjectPanelHTML(project.id, id)).join('')}
-    </div>
-  `;
-}
-
-function subProjectPanelHTML(parentId, subId) {
-  const sub = PROJECTS.find(p => p.id === subId);
-  if (!sub) return '';
-  return `
-    <div class="sub-project-panel" id="panel-${parentId}-${subId}">
-      <div class="sub-project-panel-inner">
-        <h6>${ICONS.chevron.replace('viewBox', 'style="width:12px;height:12px;transform:rotate(-90deg)" viewBox')}${sub.name}</h6>
-        <div class="card-meta"><span>${sub.role}</span><span>${sub.timeframe}</span></div>
-        <p style="font-size:0.88rem;color:var(--ink-soft);margin:0.5rem 0;">${sub.oneLiner}</p>
-        ${detailSectionsHTML(sub)}
-        ${photosHTML(sub)}
-      </div>
-    </div>
-  `;
-}
-
+// Each card is one big link to that project's own page.
 function projectCardHTML(project, index) {
   const tags = project.tags.map(t => `<span class="card-tag">${t}</span>`).join('');
   return `
-    <article class="project-card" data-category="${project.category}" id="project-${project.id}" style="transition-delay:${Math.min(index * 60, 300)}ms">
+    <a class="project-card" href="project.html?id=${project.id}" data-category="${project.category}" id="project-${project.id}" style="transition-delay:${Math.min(index * 60, 300)}ms" aria-label="Open project: ${project.name}">
       <div class="card-media">
         ${mediaHTML(project)}
         ${project.featured ? '<span class="featured-badge">Featured</span>' : ''}
@@ -241,22 +171,9 @@ function projectCardHTML(project, index) {
         ${statusPillHTML(project.status)}
         <p class="card-oneliner">${project.oneLiner}</p>
         <div class="card-tags">${tags}</div>
-        <button class="card-expand" data-toggle="project-${project.id}">
-          View full write-up ${ICONS.chevron}
-        </button>
+        <span class="card-cta">View project ${ICONS.arrowRight}</span>
       </div>
-      <div class="card-detail">
-        <div class="card-detail-inner">
-          <div class="detail-section">
-            <h5>My Role</h5>
-            <p>${project.role}</p>
-          </div>
-          ${detailSectionsHTML(project)}
-          ${photosHTML(project)}
-          ${subProjectLinksHTML(project)}
-        </div>
-      </div>
-    </article>
+    </a>
   `;
 }
 
@@ -265,47 +182,10 @@ function renderProjects() {
   const visible = PROJECTS.filter(p => !p.isSubProject);
   grid.innerHTML = visible.map((p, i) => projectCardHTML(p, i)).join('');
 
-  // Expand/collapse
-  grid.querySelectorAll('.card-expand').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const card = document.getElementById(btn.dataset.toggle);
-      card.classList.toggle('open');
-      btn.firstChild.textContent = card.classList.contains('open') ? 'Hide write-up ' : 'View full write-up ';
-    });
-  });
-
-  // Sub-project inline toggles
-  grid.querySelectorAll('[data-sub-toggle]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const panel = document.getElementById(`panel-${btn.dataset.subToggle}`);
-      panel.classList.toggle('open');
-    });
-  });
-
   // Reveal stagger
   requestAnimationFrame(() => {
     grid.querySelectorAll('.project-card').forEach(card => card.classList.add('reveal'));
   });
-}
-
-/* ---------- Lightbox ---------- */
-function initLightbox() {
-  const lb = document.getElementById('lightbox');
-  const img = document.getElementById('lightbox-img');
-  const closeBtn = document.getElementById('lightbox-close');
-  closeBtn.innerHTML = ICONS.close;
-
-  document.addEventListener('click', (e) => {
-    const target = e.target.closest('[data-lightbox]');
-    if (target) {
-      img.src = target.dataset.lightbox;
-      img.alt = target.dataset.alt || '';
-      lb.classList.add('open');
-    }
-  });
-  lb.addEventListener('click', () => lb.classList.remove('open'));
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') lb.classList.remove('open'); });
 }
 
 /* ---------- Reveal on scroll ---------- */

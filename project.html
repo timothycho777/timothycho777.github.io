@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project | Timothy Cho</title>
+  <meta name="description" id="meta-description" content="A project write-up from Timothy Cho's mechanical engineering portfolio." />
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a href="index.html" class="nav-brand"><span class="dot"></span>Timothy Cho</a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#skills">Skills</a></li>
+        <li><a href="index.html#projects" class="active">Projects</a></li>
+        <li><a href="travel.html">Travels</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap project-page" id="project-root">
+    <noscript><p>This page needs JavaScript to load the project write-up. <a href="index.html#projects">Back to projects</a></p></noscript>
+  </main>
+
+  <footer>
+    <div class="wrap">&copy; <span id="footer-year"></span> Timothy Cho — built with an unreasonable amount of SVG</div>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close image"></button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/diagrams.js"></script>
+  <script src="js/project.js"></script>
+</body>
+</html>

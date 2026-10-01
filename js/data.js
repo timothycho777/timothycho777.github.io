@@ -53,9 +53,13 @@ const CATEGORIES = ["All", "Robotics", "Mechanical Design"];
    featured     - bool
    media        - { type: 'photos'|'diagram', items: [...] } or null
    sections     - the 6-part body write-up, any can be omitted
-   subProjects  - ids of other project entries that are components of this one
-   isSubProject - true if this should NOT appear in the main grid (only reachable
-                  via its parent's "component write-ups" links)
+   subProjects  - ids of other project entries that are components of this one;
+                  each is shown as its own area on the parent's project page
+   isSubProject - true if this should NOT get its own card/page (it only appears
+                  as an area on its parent's page)
+   photoNeeds   - NOT rendered; a checklist of pictures still wanted for this project.
+                  Add images to media.items as they arrive (images/<name>.png|jpg).
+   Each project's page is project.html?id=<id>.
 */
 const PROJECTS = [
   {
@@ -109,6 +113,9 @@ const PROJECTS = [
         center of gravity (CG ≈ (4.1, 4.1)) confirming real-world stability.`,
     },
     subProjects: ["quadruped-individual", "bear-walker-team"],
+    photoNeeds: [
+      "Optional overview shot: both robots side by side (Snorlax CAD + physical Bear Walker) for the top of the page",
+    ],
   },
   {
     id: "zotbotics-arm",
@@ -126,10 +133,15 @@ const PROJECTS = [
       items: [
         { src: "images/zotbotics-arm.jpg", alt: "Assembled BCN3D Moveo robotic arm with 3D-printed hand end-effector, mounted on a demo stand", caption: "Assembled arm with the 3D-printed hand end-effector" },
         { src: "images/zotbotics-team.jpg", alt: "Six-person ZOTBotics team posing with the finished robotic arm after placing 1st", caption: "The team after placing 1st of 14 in the Rock-Paper-Scissors competition" },
-        // TODO: add the isometric CAD renders of the hand assembly here once provided —
-        // e.g. { src: "images/zotbotics-hand-isometric.png", alt: "...", caption: "..." }
       ],
     },
+    photoNeeds: [
+      "Isometric CAD renders of the hand/finger assembly (SolidWorks)",
+      "Original spool-and-thread design vs. the redesigned servo-horn design (CAD or photo)",
+      "Close-up of the fingers actuating (rock / paper / scissors gestures)",
+      "Action shot from the competition / final tournament",
+      "Optional: the servo-horn slip fix, or the 20% to 15% infill comparison",
+    ],
     sections: {
       problem: `As part of ZOTBotics' Introductory Makerspace (ZIMS) program at UC Irvine, I
         worked with a team of six over five months (January–May 2025) to design, 3D print, and
@@ -190,6 +202,13 @@ const PROJECTS = [
     status: "In Progress",
     featured: true,
     media: { type: "diagram", key: "quadrotor" },
+    photoNeeds: [
+      "SolidWorks render of the full 250mm airframe assembly",
+      "Photos of the printed TPU 4-spoke prop guards and the vibration-isolated FC mount",
+      "Wiring: the two-bus layout (high-current power bus vs. low-current signal bus)",
+      "Current-limited smoke-test setup",
+      "Photo of the assembled quadrotor in its current state",
+    ],
     sections: {
       problem: `GPS-based navigation fails in exactly the environments where autonomous systems
         are needed most — collapsed buildings, underground facilities, and dense indoor spaces
@@ -234,6 +253,12 @@ const PROJECTS = [
         { src: "images/quadruped-snorlax-cad.png", alt: "SolidWorks CAD assembly of the Snorlax-themed quadruped walking robot, showing two leg-linkage variants", caption: "SolidWorks CAD assembly of the Snorlax-themed quadruped walker" },
       ],
     },
+    photoNeeds: [
+      "GeoGebra screenshots of the three foot-path variants (rectilinear, skew-pantograph, pantograph)",
+      "First-pass vs. redesigned linkage foot path (the redesign story)",
+      "SolidWorks Motion Analysis gait capture (forward / backward / turning)",
+      "Closer shots of the gearmotor, spur gear reduction, and link details",
+    ],
     sections: {
       problem: `A 4-part homework sequence (HW1–HW4) synthesizing a four-bar leg linkage for a
         walking robot, iterating from planar kinematics to a fully simulated CAD assembly.`,
@@ -262,6 +287,13 @@ const PROJECTS = [
         { src: "images/bear-walker-team-photo.png", alt: "The MAE 183 team working through the center-of-gravity calculation, with robot parts on the table", caption: "Working through the center-of-gravity calculation and final assembly" },
       ],
     },
+    photoNeeds: [
+      "Electronics close-ups: Arduino, motor driver, Bluetooth module, battery, and wiring",
+      "The half-assembly Bluetooth test",
+      "The finished robot walking (photo or short clip/GIF)",
+      "The center-of-gravity calculation sheet and measured leg contact forces",
+      "The single leg mechanism you assembled",
+    ],
     sections: {
       problem: `A ~6-person team took the rectilinear four-bar leg linkage concept and built it
         into a physically fabricated, working walking robot — laser-cut wood construction with
