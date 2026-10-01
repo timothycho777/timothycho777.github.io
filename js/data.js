@@ -259,13 +259,20 @@ const PROJECTS = [
     media: {
       type: "photos",
       items: [
+        { src: "images/quadruped-snorlax-hero.jpg", alt: "Isometric SolidWorks render of the finished Snorlax-themed quadruped walking robot with purple rectilinear-linkage legs", caption: "Finished quadruped walker: isometric SolidWorks render" },
         { src: "images/quadruped-snorlax-cad.png", alt: "SolidWorks CAD assembly of the Snorlax-themed quadruped walking robot, showing two leg-linkage variants", caption: "SolidWorks CAD assembly of the Snorlax-themed quadruped walker" },
+        { src: "images/quadruped-snorlax-bom.jpg", alt: "Complete parts list (bill of materials) for the quadruped leg mechanism", caption: "Complete parts list (BOM) for the leg mechanism" },
+      ],
+      videos: [
+        { src: "videos/quadruped-v6-motion.mp4", poster: "videos/quadruped-v6-motion.jpg", caption: "SolidWorks Motion Analysis of the full quadruped gait cycle: forward, backward and turning" },
+        { src: "videos/quadruped-v1-kinematic.mp4", poster: "videos/quadruped-v1-kinematic.jpg", caption: "Leg-linkage kinematic diagram: static vs. dynamic four-bar model in GeoGebra" },
+        { src: "videos/quadruped-v2-redesigned.mp4", poster: "videos/quadruped-v2-redesigned.jpg", caption: "Redesigned linkage: the second GeoGebra iteration after the first foot path fell short" },
+        { src: "videos/quadruped-v3-rectilinear.mp4", poster: "videos/quadruped-v3-rectilinear.jpg", caption: "Foot-path variant 1: rectilinear pantograph (the one I selected)" },
+        { src: "videos/quadruped-v4-skew.mp4", poster: "videos/quadruped-v4-skew.jpg", caption: "Foot-path variant 2: skew pantograph" },
+        { src: "videos/quadruped-v5-pantograph.mp4", poster: "videos/quadruped-v5-pantograph.jpg", caption: "Foot-path variant 3: pantograph linkage" },
       ],
     },
     photoNeeds: [
-      "GeoGebra screenshots of the three foot-path variants (rectilinear, skew-pantograph, pantograph)",
-      "First-pass vs. redesigned linkage foot path (the redesign story)",
-      "SolidWorks Motion Analysis gait capture (forward / backward / turning)",
       "Closer shots of the gearmotor, spur gear reduction, and link details",
     ],
     sections: {
