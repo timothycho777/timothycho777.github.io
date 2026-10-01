@@ -116,7 +116,7 @@ function galleryHTML(project, heading) {
       <div class="proj-gallery">
         ${project.media.items.map(img => `
           <figure>
-            <img src="${img.src}" alt="${escapeAttr(img.alt)}" loading="lazy" data-lightbox="${img.src}" data-alt="${escapeAttr(img.alt)}">
+            <img src="${img.src}" alt="${escapeAttr(img.alt)}" loading="lazy"${img.focus ? ` style="object-position:${img.focus}"` : ''} data-lightbox="${img.src}" data-alt="${escapeAttr(img.alt)}">
             <figcaption>${img.caption}</figcaption>
           </figure>
         `).join('')}
@@ -125,6 +125,7 @@ function galleryHTML(project, heading) {
 }
 
 function diagramHTML(project) {
+  if (project.hidePageDiagram) return '';
   if (project.media && project.media.type === 'diagram') {
     return `<div class="proj-diagram">${diagramSVG(project.media.key)}</div>`;
   }

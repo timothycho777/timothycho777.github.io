@@ -354,8 +354,21 @@ section { padding: 4.5rem 0; }
 .about-card li { margin-bottom: 0.5rem; }
 .about-card li:last-child { margin-bottom: 0; }
 
-/* Side column: stacks the "Currently" card and the mini-game card */
+/* Side column: the "Currently" card (the mini-game sits in a full-width banner below) */
 .about-side { display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* "Take a break" banner: copy on the left, game on the right */
+.game-banner {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 2.5rem;
+  align-items: center;
+  margin-top: 2.5rem;
+  padding: 1.75rem 2rem;
+}
+.game-banner h4 { margin-bottom: 0.7rem; }
+.game-banner .game-note { font-size: 1.05rem; margin-bottom: 0.8rem; }
+.game-banner .game-hint { margin: 0; }
 
 .game-frame {
   display: block;
@@ -595,7 +608,7 @@ section { padding: 4.5rem 0; }
 .proj-diagram {
   max-width: 560px;
   aspect-ratio: 4 / 3;
-  background: var(--bg-elevated);
+  background: var(--bg-inset);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
@@ -742,8 +755,8 @@ footer {
 @media (max-width: 860px) {
   .hero { grid-template-columns: 1fr; padding-top: 3.5rem; }
   .hero-visual { max-width: 420px; margin: 0 auto; }
-  .about-grid { grid-template-columns: 1fr; }
-  .about-side { max-width: 480px; }
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .game-banner { grid-template-columns: 1fr; gap: 1.25rem; padding: 1.5rem; }
   .contact-card { grid-template-columns: 1fr; padding: 2.2rem 1.6rem; }
 }
 

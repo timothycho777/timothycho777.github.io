@@ -148,7 +148,8 @@ function mediaHTML(project) {
   if (!project.media) return diagramSVG('fourbar');
   if (project.media.type === 'photos') {
     const first = project.media.items[0];
-    return `<img src="${first.src}" alt="${first.alt}" loading="lazy">`;
+    const pos = first.focus ? ` style="object-position:${first.focus}"` : '';
+    return `<img src="${first.src}" alt="${first.alt}" loading="lazy"${pos}>`;
   }
   return diagramSVG(project.media.key);
 }

@@ -57,6 +57,9 @@ const CATEGORIES = ["All", "Robotics", "Mechanical Design"];
                   each is shown as its own area on the parent's project page
    isSubProject - true if this should NOT get its own card/page (it only appears
                   as an area on its parent's page)
+   hidePageDiagram - true to skip the diagram on the project page (card still shows it)
+   focus        - optional on a photo item: CSS object-position for cropped views
+                  (cards and gallery tiles), e.g. "50% 0%" keeps the top of the photo
    photoNeeds   - NOT rendered; a checklist of pictures still wanted for this project.
                   Add images to media.items as they arrive (images/<name>.png|jpg).
    Each project's page is project.html?id=<id>.
@@ -73,6 +76,7 @@ const PROJECTS = [
     tags: ["CAD", "SolidWorks", "Simulation", "Arduino/C++", "Manufacturing", "Controls"],
     status: "Draft Written",
     featured: true,
+    hidePageDiagram: true, // the diagram is the home-page card image only; the project page skips it
     media: { type: "diagram", key: "fourbar" },
     sections: {
       problem: `MAE 183 (mechanism design) ran as a two-stage arc: first an individual sequence
@@ -131,7 +135,7 @@ const PROJECTS = [
     media: {
       type: "photos",
       items: [
-        { src: "images/zotbotics-arm.jpg", alt: "Assembled BCN3D Moveo robotic arm with 3D-printed hand end-effector, mounted on a demo stand", caption: "Assembled arm with the 3D-printed hand end-effector" },
+        { src: "images/zotbotics-arm.jpg", focus: "50% 0%", alt: "Assembled BCN3D Moveo robotic arm with 3D-printed hand end-effector, mounted on a demo stand", caption: "Assembled arm with the 3D-printed hand end-effector" },
         { src: "images/zotbotics-team.jpg", alt: "Six-person ZOTBotics team posing with the finished robotic arm after placing 1st", caption: "The team after placing 1st of 14 in the Rock-Paper-Scissors competition" },
       ],
     },
