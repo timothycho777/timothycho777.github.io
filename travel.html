@@ -412,6 +412,59 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
+  .photo-grid.has-photos { grid-template-columns: repeat(2, 1fr); }
+  .photo-thumb {
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel-2);
+    overflow: hidden;
+    cursor: zoom-in;
+    aspect-ratio: 4 / 3;
+    display: block;
+  }
+  .photo-thumb:first-child { grid-column: 1 / -1; aspect-ratio: 3 / 2; }
+  .photo-thumb:last-child:nth-child(even) { grid-column: 1 / -1; aspect-ratio: 3 / 2; }
+  .photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 240ms ease;
+  }
+  .photo-thumb:hover img,
+  .photo-thumb:focus-visible img { transform: scale(1.04); }
+  .photo-thumb:focus-visible { outline: 2px solid var(--route); outline-offset: 2px; }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 14, 18, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+    cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 88vh; border-radius: 8px; }
+  .lightbox-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .photo-placeholder {
     aspect-ratio: 4 / 3;
     border-radius: 8px;
@@ -538,7 +591,7 @@
     <p class="tagline">Thirteen trips so far &mdash; mission trips, an internship abroad, and a few just for the adventure. Scroll or drag to explore the map, or click a pin to zoom straight in.</p>
     <div class="sample-note">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      <span>Photos are on the way &mdash; I'll drop them in from my phone soon. Everything else here is from the real trips.</span>
+      <span>Photos are up for Tokyo, Cortina, Paris, Barcelona, and Istanbul &mdash; the rest are on the way. Everything here is from the real trips.</span>
     </div>
   </header>
 
@@ -604,6 +657,13 @@
     <div class="trip-list" id="tripList"></div>
   </div>
 
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close photo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <img id="lightboxImg" src="" alt="" />
 </div>
 
 <script>
@@ -680,6 +740,53 @@
       blurb: "First family trip with my mom, brother, his wife, and niece Celine — hiked the Koko Head Railway alone at 4am and made friends with the Uber driver, then fell for Lanikai Beach's water.",
       hue: 185 }
   ];
+
+  // Photos live in images/travel/<id>/<id>-<n>.jpg. Add alt text here as more arrive;
+  // destinations without an entry keep the "Photo soon" placeholders.
+  var PHOTO_ALTS = {
+    tokyo: [
+      "Three friends reflected in a convex mirror above a convenience store aisle",
+      "Italian-style harbor buildings against a cloudy sky"
+    ],
+    cortina: [
+      "Trail signpost on a ridge with the Dolomites in the distance",
+      "Two hikers jumping in front of the Tre Cime peaks, with TRE CIME spelled out in stones",
+      "Hiker crouching beside a mountain lake below rocky peaks",
+      "Cows grazing along a rocky ridge under heavy clouds",
+      "A cow standing on a rocky hillside",
+      "Hiker standing at the edge of a turquoise alpine lake"
+    ],
+    paris: [
+      "Inside a church with a cross above the sanctuary and a congregation seated",
+      "The Arc de Triomphe with cars driving around it",
+      "Person in an I Heart Paris shirt posing in front of the Louvre pyramid",
+      "Friends smiling for a selfie beside a canal, feet hanging over the edge",
+      "A French flag flying above a stone building's carved pediment",
+      "The Eiffel Tower against a pale blue sky"
+    ],
+    barcelona: [
+      "Person standing on a road below jagged rock peaks and a stone monastery",
+      "Sailboats and a green, rocky coastline on calm blue water",
+      "The towers of the Sagrada Familia against the sky",
+      "Narrow city street lined with tall apartment buildings",
+      "Empty metro platform lit by long fluorescent lights"
+    ],
+    istanbul: [
+      "Aerial view of a dense city through an airplane window",
+      "Red sunset sky over a skyline of mosques",
+      "Cats and a seagull on the rocks along the waterfront as people sit by the sea",
+      "Sunset clouds over the water with ferries along the shore",
+      "Dark storm clouds over a hazy city skyline",
+      "An airplane wing above a layer of clouds"
+    ]
+  };
+
+  DESTINATIONS.forEach(function (dest) {
+    var alts = PHOTO_ALTS[dest.id] || [];
+    dest.photos = alts.map(function (alt, i) {
+      return { src: "images/travel/" + dest.id + "/" + dest.id + "-" + (i + 1) + ".jpg", alt: alt };
+    });
+  });
 
   var svg = d3.select("#worldSvg");
   var zoomG = d3.select("#zoomG");
@@ -856,7 +963,24 @@
     statFlight.textContent = dest.flightTime;
 
     photoGrid.innerHTML = "";
-    for (var i = 0; i < 3; i++) {
+    var hasPhotos = dest.photos && dest.photos.length;
+    photoGrid.classList.toggle("has-photos", !!hasPhotos);
+    if (hasPhotos) {
+      dest.photos.forEach(function (photo) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "photo-thumb";
+        btn.setAttribute("aria-label", "Enlarge photo: " + photo.alt);
+        var img = document.createElement("img");
+        img.src = photo.src;
+        img.alt = photo.alt;
+        img.loading = "lazy";
+        btn.appendChild(img);
+        btn.addEventListener("click", function () { openLightbox(photo); });
+        photoGrid.appendChild(btn);
+      });
+    }
+    for (var i = 0; !hasPhotos && i < 3; i++) {
       var ph = document.createElement("div");
       ph.className = "photo-placeholder";
       var isDark = document.documentElement.getAttribute("data-theme")
@@ -896,8 +1020,23 @@
   document.getElementById("closeBtn").addEventListener("click", clearSelection);
   document.getElementById("backLink").addEventListener("click", clearSelection);
 
+  // ---------- lightbox ----------
+  var lightbox = document.getElementById("lightbox");
+  var lightboxImg = document.getElementById("lightboxImg");
+
+  function openLightbox(photo) {
+    lightboxImg.src = photo.src;
+    lightboxImg.alt = photo.alt;
+    lightbox.classList.add("open");
+  }
+  function closeLightbox() { lightbox.classList.remove("open"); }
+
+  lightbox.addEventListener("click", closeLightbox);
+
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && activeId) clearSelection();
+    if (e.key !== "Escape") return;
+    if (lightbox.classList.contains("open")) { closeLightbox(); return; }
+    if (activeId) clearSelection();
   });
 })();
 </script>
