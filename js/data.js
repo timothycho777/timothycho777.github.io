@@ -139,10 +139,13 @@ const PROJECTS = [
       items: [
         { src: "images/zotbotics-arm.jpg", focus: "50% 0%", alt: "Assembled BCN3D Moveo robotic arm with 3D-printed hand end-effector, mounted on a demo stand", caption: "Assembled arm with the 3D-printed hand end-effector" },
         { src: "images/zotbotics-team.jpg", alt: "Six-person ZOTBotics team posing with the finished robotic arm after placing 1st", caption: "The team after placing 1st of 14 in the Rock-Paper-Scissors competition" },
+        { src: "images/zotbotics-cad-1.jpg", alt: "SolidWorks CAD model of the robotic hand assembly, left dimetric view", caption: "CAD model of the hand assembly: left dimetric view" },
+        { src: "images/zotbotics-cad-2.jpg", alt: "SolidWorks CAD model of the robotic hand assembly, right dimetric view", caption: "CAD model of the hand assembly: right dimetric view" },
+        { src: "images/zotbotics-cad-3.jpg", alt: "CAD model of a fully assembled finger in the closed position, isometric view", caption: "Fully assembled finger, closed position (isometric)" },
+        { src: "images/zotbotics-cad-4.jpg", alt: "CAD model of a fully assembled finger in the open position, isometric view", caption: "Fully assembled finger, open position (isometric)" },
       ],
     },
     photoNeeds: [
-      "Isometric CAD renders of the hand/finger assembly (SolidWorks)",
       "Original spool-and-thread design vs. the redesigned servo-horn design (CAD or photo)",
       "Close-up of the fingers actuating (rock / paper / scissors gestures)",
       "Action shot from the competition / final tournament",
