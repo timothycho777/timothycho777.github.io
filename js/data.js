@@ -211,6 +211,7 @@ const PROJECTS = [
     status: "In Progress",
     featured: true,
     media: { type: "diagram", key: "quadrotor" },
+    subProjects: ["quadrotor-prop-guard"],
     photoNeeds: [
       "SolidWorks render of the full 250mm airframe assembly",
       "Photos of the printed TPU 4-spoke prop guards and the vibration-isolated FC mount",
@@ -239,7 +240,62 @@ const PROJECTS = [
         full battery, to catch wiring mistakes before they become visible damage.`,
       results: `In progress — Phase 1 of 5 (hardware foundation). Target milestones: stable
         indoor position hold within ±15cm (Phase 3) and a 4-waypoint autonomous indoor mission
-        with no human intervention (Phase 4).`,
+        with no human intervention (Phase 4). Prop-guard redesign so far: v1 to v2 cut mass 35.6% (77.1 g to 49.7 g), with an FEA stiffness comparison in the write-up below.`,
+    },
+  },
+
+  {
+    id: "quadrotor-prop-guard",
+    name: "Prop Guard Redesign and FEA (v1 to v2)",
+    course: "Quadrotor component",
+    isSubProject: true,
+    parent: "quadrotor",
+    oneLiner: "Redesigned the 3D-printed TPU prop guard to cut mass 35.6%, then compared v1 and v2 with large-displacement FEA in SolidWorks Simulation.",
+    role: "Solo: CAD, simulation setup, and analysis",
+    timeframe: "Oct 2026",
+    tags: ["CAD", "SolidWorks", "FEA", "3D Printing"],
+    status: "In Progress",
+    media: {
+      type: "photos",
+      items: [
+        { src: "images/quadrotor-guard-v1-cad.jpg", alt: "SolidWorks isometric view of prop guard v1: a tall straight-sided duct wall with four spokes and a diamond-shaped motor mount", caption: "Prop guard v1: tall straight wall, 4 spokes, diamond motor mount (77.09 g)" },
+        { src: "images/quadrotor-guard-v2-cad.jpg", alt: "SolidWorks isometric view of prop guard v2: a shorter duct wall with a lipped rim, four spokes, and a round motor mount", caption: "Prop guard v2: shorter wall with a lipped rim, 4 spokes, round motor mount (49.65 g)" },
+        { src: "images/quadrotor-guard-v1-fea-disp-0p5N.jpg", alt: "SolidWorks Simulation displacement plot of prop guard v1 under a 0.5 N inward load on the rim between two spokes", caption: "v1 displacement under a 0.5 N inward load between two spokes (max 7.41 mm; deformation drawn at 2.4x)" },
+        { src: "images/quadrotor-guard-v1-fea-stress-0p5N.jpg", alt: "SolidWorks Simulation von Mises stress plot of prop guard v1 under a 0.5 N load, with peak stress at the spoke roots near the hub", caption: "v1 von Mises stress, same load (peak about 0.37 MPa vs. 18 MPa yield)" },
+        { src: "images/quadrotor-guard-v2-fea-disp-0p5N.jpg", alt: "SolidWorks Simulation displacement plot of prop guard v2 under a 0.5 N inward load on the rim between two spokes", caption: "v2 displacement under the same 0.5 N load (max 9.06 mm; true scale)" },
+        { src: "images/quadrotor-guard-v2-fea-stress-0p5N.jpg", alt: "SolidWorks Simulation von Mises stress plot of prop guard v2 under a 0.5 N load, with peak stress at the spoke roots near the hub", caption: "v2 von Mises stress, same load (peak about 0.56 MPa). Legend scales differ between plots." },
+      ],
+    },
+    sections: {
+      problem: `A prop guard has to protect the propellers without adding weight the quadrotor
+        has to carry. My first version (v1) worked but was heavy, so I redesigned it to cut mass,
+        then needed a defensible way to see what the weight savings cost in stiffness.`,
+      approach: `<strong>Design changes, v1 to v2:</strong> a much shorter duct wall, a lipped rim
+        profile, filleted spoke-to-rim junctions, and a round motor-mount hub in place of the
+        diamond one with slotted holes. Both versions keep four spokes.<br><br>
+        <strong>FEA setup:</strong> SolidWorks Simulation static studies with large displacement
+        on, TPU 95A as a linear-elastic material (E = 26 MPa, yield 18 MPa), the hub bolt holes
+        and center bore fixed, and an inward force on a 10 x 10 mm patch of the rim halfway
+        between two spokes, the least-supported spot and so the conservative case. The fixture,
+        patch size, and loads are identical on both versions.`,
+      challenges: `My first plan was a 40 N impact load, but the TPU guard is so compliant that the
+        study gave unrealistically large displacements, and runs above 2 N hit solver convergence
+        limits. I switched to small loads (0.5 to 2 N), turned on large-displacement analysis, and
+        treat the 2 N runs as the edge of the reliable range. Peak stress also sits at the spoke
+        roots next to the fixed hub holes, where fixtures create artificial hot spots, so I read
+        stress along the spokes and have not yet run a mesh-convergence check.`,
+      results: `<strong>Mass:</strong> 77.09 g to 49.65 g (-35.6%). Volume -35.6%, surface area -29.3%.<br><br>
+        <strong>FEA, max displacement / peak stress at the same load:</strong><br>
+        0.5 N: v1 7.41 mm / 0.37 MPa &middot; v2 9.06 mm / 0.56 MPa<br>
+        1 N: v1 17.90 mm / 0.90 MPa &middot; v2 23.15 mm / 1.33 MPa<br>
+        2 N: v1 41.96 mm / 2.27 MPa &middot; v2 51.89 mm / 2.85 MPa<br><br>
+        v2 is roughly 19 to 23% less stiff than v1 but 35.6% lighter, so stiffness per gram is
+        about 20 to 27% better. Both guards soften as the load rises, and peak stress stays far
+        below the 18 MPa yield strength at every load I ran.`,
+      takeaways: `A linear-elastic model of a hyperelastic printed material is good for comparing
+        two designs, not for predicting failure, so I am presenting these as design-to-design
+        comparisons. Next is a physical check: hang known weights on the rim of the printed guard
+        and compare the measured deflection with the 7.4 mm (v1) and 9.1 mm (v2) predicted at 0.5 N.`,
     },
   },
 
