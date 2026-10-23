@@ -18,12 +18,12 @@ const DIAGRAMS = {
       </g>
       <circle cx="90" cy="200" r="6" fill="var(--blue)"/>
       <circle cx="300" cy="200" r="6" fill="var(--blue)"/>
-      <circle cx="150" cy="90" r="6" fill="var(--orange)"/>
-      <circle cx="280" cy="110" r="6" fill="var(--orange)"/>
-      <path d="M 150 90 Q 130 40 175 35" stroke="var(--orange)" stroke-width="1.6" fill="none" stroke-dasharray="3 4"/>
-      <text x="90" y="222" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--ink-faint)">GROUND</text>
-      <text x="300" y="222" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--ink-faint)">GROUND</text>
-      <text x="215" y="30" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--orange)">FOOT PATH</text>
+      <circle cx="150" cy="90" r="6" fill="var(--accent)"/>
+      <circle cx="280" cy="110" r="6" fill="var(--accent)"/>
+      <path d="M 150 90 Q 130 40 175 35" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-dasharray="3 4"/>
+      <text x="90" y="222" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--ink-faint)">GROUND</text>
+      <text x="300" y="222" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--ink-faint)">GROUND</text>
+      <text x="215" y="30" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--accent)">FOOT PATH</text>
     </svg>`,
 
   quadrotor: `
@@ -33,7 +33,7 @@ const DIAGRAMS = {
         <line x1="70" y1="70" x2="330" y2="190"/>
         <line x1="330" y1="70" x2="70" y2="190"/>
       </g>
-      <g stroke="var(--orange)" stroke-width="3" stroke-linecap="round">
+      <g stroke="var(--accent)" stroke-width="3" stroke-linecap="round">
         <line x1="200" y1="130" x2="70" y2="70"/>
         <line x1="200" y1="130" x2="330" y2="70"/>
       </g>
@@ -46,9 +46,9 @@ const DIAGRAMS = {
       <circle cx="70" cy="190" r="16" fill="none" stroke="var(--ink-faint)" stroke-width="2"/>
       <circle cx="330" cy="190" r="16" fill="none" stroke="var(--ink-faint)" stroke-width="2"/>
       <rect x="178" y="110" width="44" height="40" rx="5" fill="var(--bg-elevated)" stroke="var(--blue)" stroke-width="2"/>
-      <text x="200" y="134" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--blue)">FC</text>
-      <text x="70" y="235" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--orange)">POWER BUS</text>
-      <text x="330" y="235" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--blue)">SIGNAL BUS</text>
+      <text x="200" y="134" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--blue)">FC</text>
+      <text x="70" y="235" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--accent)">POWER BUS</text>
+      <text x="330" y="235" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--blue)">SIGNAL BUS</text>
     </svg>`,
 
   heatsink: `
@@ -58,15 +58,15 @@ const DIAGRAMS = {
         ${[0,1,2,3,4,5,6].map(i => `<line x1="${100 + i*30}" y1="200" x2="${100 + i*30}" y2="90"/>`).join('')}
       </g>
       <rect x="90" y="200" width="220" height="16" fill="var(--blue)"/>
-      <circle cx="200" cy="60" r="26" fill="none" stroke="var(--orange)" stroke-width="2.5"/>
-      <g stroke="var(--orange)" stroke-width="2" stroke-linecap="round">
+      <circle cx="200" cy="60" r="26" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+      <g stroke="var(--accent)" stroke-width="2" stroke-linecap="round">
         <line x1="200" y1="42" x2="200" y2="78"/>
         <line x1="182" y1="60" x2="218" y2="60"/>
       </g>
       <g stroke="var(--ink-faint)" stroke-width="1.4" stroke-dasharray="3 4">
         <path d="M 200 90 L 195 105 M 200 90 L 205 105" />
       </g>
-      <text x="200" y="240" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--ink-faint)">FIN ARRAY</text>
+      <text x="200" y="240" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--ink-faint)">FIN ARRAY</text>
     </svg>`,
 
   cubesat: `
@@ -75,14 +75,14 @@ const DIAGRAMS = {
       <g>
         <rect x="40" y="110" width="90" height="14" rx="2" fill="var(--ink-faint)" opacity="0.5"/>
         <rect x="140" y="110" width="90" height="14" rx="2" fill="var(--ink-faint)" opacity="0.5"/>
-        <circle cx="135" cy="117" r="9" fill="none" stroke="var(--orange)" stroke-width="2" stroke-dasharray="2 2"/>
-        <text x="135" y="150" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--ink-faint)">V1 — pin shear fail</text>
+        <circle cx="135" cy="117" r="9" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="2 2"/>
+        <text x="135" y="150" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--ink-faint)">V1 — pin shear fail</text>
       </g>
       <g transform="translate(30,0)">
         <rect x="230" y="70" width="90" height="14" rx="2" fill="var(--blue)"/>
         <rect x="230" y="94" width="90" height="14" rx="2" fill="var(--blue)" transform="rotate(18 230 94)"/>
-        <circle cx="230" cy="88" r="10" fill="var(--orange)"/>
-        <text x="270" y="140" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--blue)">V2 — reinforced hinge</text>
+        <circle cx="230" cy="88" r="10" fill="var(--accent)"/>
+        <text x="270" y="140" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--blue)">V2 — reinforced hinge</text>
       </g>
       <path d="M 175 130 L 210 100" stroke="var(--ink-faint)" stroke-width="1.6" marker-end="url(#arrow)" fill="none"/>
       <defs>
@@ -96,10 +96,10 @@ const DIAGRAMS = {
     <svg viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Eight-leg rectilinear walking robot schematic">
       <rect width="400" height="260" fill="var(--bg-inset)"/>
       <rect x="80" y="100" width="240" height="30" rx="4" fill="var(--blue)"/>
-      <g stroke="var(--orange)" stroke-width="2.5" stroke-linecap="round">
+      <g stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round">
         ${[100,150,200,250,300].filter(x=>x!==200).map(x => `<line x1="${x}" y1="130" x2="${x-8}" y2="190"/><line x1="${x-8}" y1="190" x2="${x+14}" y2="210"/>`).join('')}
       </g>
-      <text x="200" y="235" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--ink-faint)">8-LEG RECTILINEAR LINKAGE</text>
+      <text x="200" y="235" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--ink-faint)">8-LEG RECTILINEAR LINKAGE</text>
     </svg>`,
 };
 
@@ -149,10 +149,10 @@ function initHeroLinkage() {
   rail.setAttribute('y2', groundB.y);
 
   const crank = makeLine('var(--blue)', 4);
-  const coupler = makeLine('var(--orange)', 4);
+  const coupler = makeLine('var(--accent)', 4);
   const rocker = makeLine('var(--blue)', 4);
   const trace = document.createElementNS(ns, 'path');
-  trace.setAttribute('stroke', 'var(--orange)');
+  trace.setAttribute('stroke', 'var(--accent)');
   trace.setAttribute('stroke-width', '1.4');
   trace.setAttribute('fill', 'none');
   trace.setAttribute('opacity', '0.35');
@@ -161,8 +161,8 @@ function initHeroLinkage() {
 
   const pivotA = makeCircle(6, 'var(--blue)'); pivotA.setAttribute('cx', groundA.x); pivotA.setAttribute('cy', groundA.y);
   const pivotB = makeCircle(6, 'var(--blue)'); pivotB.setAttribute('cx', groundB.x); pivotB.setAttribute('cy', groundB.y);
-  const jointC = makeCircle(5.5, 'var(--orange)');
-  const jointD = makeCircle(5.5, 'var(--orange)');
+  const jointC = makeCircle(5.5, 'var(--accent)');
+  const jointD = makeCircle(5.5, 'var(--accent)');
 
   mount.appendChild(svg);
 

@@ -75,7 +75,7 @@ function initScrollSpy() {
 /* ---------- Static text from SITE ---------- */
 function populateSiteText() {
   document.getElementById('hero-name').textContent = SITE.name;
-  document.getElementById('hero-role').textContent = `${SITE.role} · ${SITE.school}`;
+  document.getElementById('hero-role').innerHTML = `<span>${SITE.role}</span><span>${SITE.school}</span>`;
   document.getElementById('hero-tagline').textContent = SITE.tagline;
   document.getElementById('about-text').innerHTML = SITE.about.split('\n\n').map(p => `<p>${p.trim()}</p>`).join('');
 
@@ -159,7 +159,6 @@ function projectCardHTML(project, index) {
     <a class="project-card" href="project.html?id=${project.id}" data-category="${project.category}" id="project-${project.id}" style="transition-delay:${Math.min(index * 60, 300)}ms" aria-label="Open project: ${project.name}">
       <div class="card-media">
         ${mediaHTML(project)}
-        ${project.featured ? '<span class="featured-badge">Featured</span>' : ''}
       </div>
       <div class="card-body">
         <div class="card-meta">
