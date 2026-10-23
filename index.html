@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Timothy Cho | Mechanical Engineering Portfolio</title>
-  <meta name="description" content="Timothy Cho — mechanical engineering student. Robotics, mechanism design, and hands-on builds from kinematic CAD to physical prototypes." />
+  <meta name="description" content="Timothy Cho — mechanical engineering student at UC Irvine (B.S., scheduled June 2027). SolidWorks CAD and FEA, 3D-printed prototypes, and electromechanical builds." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,9 +18,9 @@
     <div class="wrap nav-inner">
       <a href="#top" class="nav-brand"><span class="dot"></span>Timothy Cho</a>
       <ul class="nav-links" id="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#skills">Skills</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#about">About</a></li>
         <li><a href="travel.html">Travels</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -44,11 +44,7 @@
           <a href="#projects" class="btn btn-primary">View Projects</a>
           <a href="#contact" class="btn btn-outline">Get in Touch</a>
         </div>
-        <div class="hero-stats">
-          <div class="hero-stat"><div class="num" id="stat-projects">0</div><div class="label">Projects</div></div>
-          <div class="hero-stat"><div class="num" id="stat-featured">0</div><div class="label">Featured</div></div>
-          <div class="hero-stat"><div class="num" id="stat-categories">0</div><div class="label">Disciplines</div></div>
-        </div>
+        <div class="hero-stats" id="hero-stats"></div>
       </div>
       <div class="hero-visual">
         <span class="tag">FIG. 1 — FOUR-BAR LINKAGE, LIVE</span>
@@ -56,33 +52,15 @@
       </div>
     </section>
 
-    <!-- ===== About ===== -->
-    <section id="about" class="wrap">
+    <!-- ===== Projects ===== -->
+    <section id="projects" class="wrap">
       <div class="section-head">
-        <div class="section-num">01 / About</div>
-        <h2 class="section-title">Design → build → test, on repeat</h2>
+        <div class="section-num">01 / Selected Work</div>
+        <h2 class="section-title">Projects</h2>
+        <p class="section-sub">Filter by discipline, then click any project to open its full write-up — problem, approach, challenges, results, and photos.</p>
       </div>
-      <div class="about-grid">
-        <div class="about-text" id="about-text" data-reveal></div>
-        <div class="about-side">
-          <div class="about-card" data-reveal>
-            <h4>Currently</h4>
-            <ul>
-              <li>Building a GPS-denied autonomous quadrotor, solo, end to end</li>
-              <li>Studying mechanical engineering at UC Irvine</li>
-              <li>Open to internship / new-grad roles in robotics &amp; mechanical design</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="about-card game-card game-banner" data-reveal>
-        <div class="game-copy">
-          <h4>Take a break</h4>
-          <p class="game-hint">Click the box, then jump with Space or a tap. <a href="trex-game/">Play full size</a></p>
-        </div>
-        <iframe class="game-frame" src="trex-game/" title="Pochacco Runner, a small jumping game" scrolling="no" loading="lazy"></iframe>
-      </div>
+      <div class="filter-bar" id="filter-bar"></div>
+      <div class="project-grid" id="project-grid"></div>
     </section>
 
     <!-- ===== Skills ===== -->
@@ -95,15 +73,34 @@
       <div class="skills-grid" id="skills-grid"></div>
     </section>
 
-    <!-- ===== Projects ===== -->
-    <section id="projects" class="wrap">
+    <!-- ===== About ===== -->
+    <section id="about" class="wrap">
       <div class="section-head">
-        <div class="section-num">03 / Selected Work</div>
-        <h2 class="section-title">Projects</h2>
-        <p class="section-sub">Filter by discipline, then click any project to open its full write-up — problem, approach, challenges, results, and photos.</p>
+        <div class="section-num">03 / About</div>
+        <h2 class="section-title">Design → build → test, on repeat</h2>
       </div>
-      <div class="filter-bar" id="filter-bar"></div>
-      <div class="project-grid" id="project-grid"></div>
+      <div class="about-grid">
+        <div class="about-text" id="about-text" data-reveal></div>
+        <div class="about-side">
+          <div class="about-card" data-reveal>
+            <h4>At a glance</h4>
+            <ul>
+              <li>UC Irvine, B.S. Mechanical Engineering (scheduled June 2027)</li>
+              <li>GPA 3.4</li>
+              <li>SolidWorks CSWA certified (Aug 2024)</li>
+              <li>U.S. citizen</li>
+            </ul>
+          </div>
+          <div class="about-card" data-reveal>
+            <h4>Currently</h4>
+            <ul>
+              <li>Building a quadrotor for GPS-denied indoor navigation: airframe built, flight-controller bring-up next</li>
+              <li>Planning a lighter prop-guard iteration</li>
+              <li>Open to mechanical design, manufacturing, and robotics internships and new-grad roles</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ===== Contact ===== -->
@@ -111,13 +108,24 @@
       <div class="contact-card" data-reveal>
         <div>
           <h2>Let's talk</h2>
-          <p>Open to internships, new-grad roles, and anything involving mechanisms that move. Reach out any of these ways.</p>
+          <p>Open to mechanical design, manufacturing, and robotics internships and new-grad roles. Reach out any of these ways.</p>
         </div>
         <div class="contact-links">
           <a class="contact-link" id="contact-mail" href="#"><span></span></a>
           <a class="contact-link" id="contact-linkedin" href="#" target="_blank" rel="noopener"><span></span>LinkedIn Profile</a>
           <a class="contact-link" id="contact-github" href="#" target="_blank" rel="noopener"><span></span>GitHub Profile</a>
         </div>
+      </div>
+    </section>
+
+    <!-- ===== Take a break ===== -->
+    <section id="break" class="wrap">
+      <div class="about-card game-card game-banner" data-reveal>
+        <div class="game-copy">
+          <h4>Take a break</h4>
+          <p class="game-hint">Click the box, then jump with Space or a tap. <a href="trex-game/">Play full size</a></p>
+        </div>
+        <iframe class="game-frame" src="trex-game/" title="Pochacco Runner, a small jumping game" scrolling="no" loading="lazy"></iframe>
       </div>
     </section>
 

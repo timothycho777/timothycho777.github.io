@@ -1,50 +1,62 @@
 /* ==========================================================================
-   Portfolio content — pulled from the Notion "Portfolio Projects" database.
-   Edit this file to add/update projects; the page renders from this data.
+   Portfolio content. Source of truth: the Career OS Experience Bank (Notion).
+   Every claim here must be supported there. Edit this file to add/update
+   projects; the page renders from this data.
+
+   RULES: only claim what is documented; nothing flown or configured on the
+   quadrotor is claimed; simulation results are labeled as simulation.
    ========================================================================== */
 
 const SITE = {
   name: "Timothy Cho",
   role: "Mechanical Engineering Student",
   school: "University of California, Irvine",
-  tagline: "I design, build, and test mechanisms — from planar linkage kinematics on a whiteboard to physical robots that actually walk, grip, and fly.",
+  tagline: "I design, build, and test mechanical systems: from kinematic CAD and FEA to 3D-printed, wired-up prototypes that move.",
   email: "timothycho12345@gmail.com",
   linkedin: "https://www.linkedin.com/in/timothycho7/",
   github: "https://github.com/timothycho777",
-  about: `Mechanical engineering student focused on the full pipeline of building
-    physical, moving systems — kinematic design, CAD and simulation, manufacturing,
-    and the electrical/firmware integration that turns a model into something that
-    actually works on a bench. Recent work spans legged-robot mechanism design,
-    a GPS-denied autonomous quadrotor build, and a competition robotic arm that
-    took 1st place against 13 other teams.`,
+  about: `Mechanical engineering student at UC Irvine focused on mechanical design and
+    prototyping: SolidWorks CAD and simulation, 3D-printed and team-fabricated hardware, and
+    the electrical wiring that gets a design running on a bench. I designed the hand
+    end-effector for a robotic arm that placed 1st of 14 teams, took a four-bar leg mechanism
+    from kinematic design to a team-built walking robot, and am now building a quadrotor for
+    GPS-denied indoor navigation, starting with a redesigned prop guard compared by FEA.`,
+  // Shown in the hero. Static facts only (see Education & Skills in the Experience Bank).
+  stats: [
+    { num: "1st of 14", label: "Robot-arm competition" },
+    { num: "CSWA", label: "SolidWorks certified" },
+    { num: "Jun 2027", label: "Scheduled graduation" },
+  ],
 };
 
-// Aggregated / curated skill groups shown in the Skills section.
+// Curated skill groups shown in the Skills section. Terms that are only
+// defensible in context (ArduPilot, ROS 2, Python, welding, laser cutting)
+// stay out of this list and appear, scoped, inside project write-ups.
 const SKILL_GROUPS = [
   {
     label: "CAD & Simulation",
     icon: "cube",
-    skills: ["SolidWorks", "CAD Modeling", "Motion Analysis", "FEA", "GeoGebra (kinematics)"],
+    skills: ["SolidWorks", "SolidWorks Simulation (FEA)", "SolidWorks Motion Analysis", "AutoCAD", "GeoGebra (kinematics)"],
   },
   {
-    label: "Manufacturing & Fabrication",
+    label: "Prototyping & Fabrication",
     icon: "wrench",
-    skills: ["3D Printing", "Laser Cutting", "Tolerance Analysis", "Assembly & Test"],
+    skills: ["3D Printing (PLA, TPU)", "Bambu A1 / Orca Slicer", "Tolerance Corrections", "Assembly & Test"],
   },
   {
-    label: "Electronics & Controls",
+    label: "Electronics",
     icon: "bolt",
-    skills: ["Arduino / C++", "Motor Control", "Wiring Architecture", "ArduPilot"],
+    skills: ["Arduino", "Motor & Battery Wiring", "Soldering", "Multimeter / Oscilloscope"],
   },
   {
-    label: "Autonomy & Software",
-    icon: "chip",
-    skills: ["NVIDIA Isaac Sim (planned)", "State Estimation", "Autonomous Navigation"],
+    label: "Credentials & Tools",
+    icon: "award",
+    skills: ["SolidWorks CSWA (Aug 2024)", "Microsoft Office"],
   },
 ];
 
 // Category filter keys must match `category` on each project below.
-const CATEGORIES = ["All", "Robotics", "Mechanical Design"];
+const CATEGORIES = ["All", "Mechanical Design", "Robotics"];
 
 /* Each project:
    id           - slug, used for anchors
@@ -65,73 +77,18 @@ const CATEGORIES = ["All", "Robotics", "Mechanical Design"];
    photoNeeds   - NOT rendered; a checklist of pictures still wanted for this project.
                   Add images to media.items as they arrive (images/<name>.png|jpg).
    Each project's page is project.html?id=<id>.
+   Order in this array = order on the home page and in the prev/next pager.
 */
 const PROJECTS = [
-  {
-    id: "legged-walking-robot",
-    name: "Legged Walking Robot — Mechanism Design to Team Build",
-    course: "MAE 183, Mechanism Design",
-    oneLiner: "Carried a four-bar leg mechanism from kinematic design and simulated CAD through a physically built, team-fabricated 8-leg walking robot.",
-    role: "Individual: leg-mechanism kinematics & CAD (sole designer). Team build: Electronics & Electrical Systems.",
-    timeframe: "Spring – Jun 2026",
-    category: "Robotics",
-    tags: ["CAD", "SolidWorks", "Simulation", "Arduino/C++", "Manufacturing", "Controls"],
-    status: "Draft Written",
-    featured: true,
-    hidePageDiagram: true, // the diagram is the home-page card image only; the project page skips it
-    media: { type: "diagram", key: "fourbar" },
-    sections: {
-      problem: `MAE 183 (mechanism design) ran as a two-stage arc: first an individual sequence
-        synthesizing and validating a four-bar leg linkage in GeoGebra and SolidWorks, then a
-        ~6-person team project that took that same rectilinear-linkage concept and built it into
-        a physically fabricated, working walking robot. Together they cover the full path from
-        planar kinematics to a driven physical prototype.`,
-      contribution: `<strong>Individual coursework:</strong> sole designer — kinematic linkage
-        synthesis in GeoGebra (comparing rectilinear, skew-pantograph, and pantograph foot-path
-        variants off a Klann-type mechanism), then full CAD modeling and SolidWorks Motion
-        Analysis of a quadruped walker built on the selected rectilinear linkage.<br><br>
-        <strong>Team build ("Bear Walker"):</strong> owned Electronics &amp; Electrical Systems —
-        verified motor, battery, and Arduino controller functionality, wired the drivetrain with
-        Bluetooth control, assembled one of the team's eight leg mechanisms, and helped
-        transport/store the physical assembly between sessions.`,
-      approach: `Started from planar four-bar linkage theory: modeled a Klann-type leg mechanism
-        in GeoGebra as paired static/dynamic systems, compared three foot-path-generating
-        variants, then selected and iterated the rectilinear linkage through a full redesign pass.
-        Modeled the mechanism and a complete quadruped assembly in SolidWorks — gearmotor, spur
-        gear reduction, links, bearings, and hardware — and validated the design with a Motion
-        Analysis simulating forward/backward/turning gait. The team then carried that linkage
-        into a physical build: laser-cut wood legs and body panels, an Arduino-based controller
-        with motor driver and Bluetooth module, and full electrical wiring. Subsystems were
-        validated incrementally (a half-assembly Bluetooth test) before full integration, and the
-        finished robot's center of gravity was calculated from measured leg contact forces to
-        confirm walking stability before the final test run.`,
-      challenges: `The first-pass leg linkage didn't produce the foot-path shape needed for a
-        clean gait, so it was re-derived in GeoGebra and rebuilt in SolidWorks as a second
-        iteration. On the team build, coordinating eight independent leg mechanisms into one
-        working drivetrain meant validating subsystems before full integration — testing half the
-        assembly over Bluetooth caught wiring issues early — and going from a CAD model to a
-        working physical robot surfaced real motor/battery/controller wiring problems that
-        simulation alone doesn't show.`,
-      results: `Delivered a complete path from validated planar kinematics through a simulated
-        CAD assembly (individual) to a fully working, physically fabricated quadruped robot
-        (team) — with a SolidWorks Motion Analysis demonstrating gait in simulation, and a
-        physical build with verified electronics, a Bluetooth-driven test run, and a measured
-        center of gravity (CG ≈ (4.1, 4.1)) confirming real-world stability.`,
-    },
-    subProjects: ["quadruped-individual", "bear-walker-team"],
-    photoNeeds: [
-      "Optional overview shot: both robots side by side (Snorlax CAD + physical Bear Walker) for the top of the page",
-    ],
-  },
   {
     id: "zotbotics-arm",
     name: "ZOTBotics — Robot Arm",
     course: "UCI ZOTBotics Makerspace (ZIMS)",
-    oneLiner: "Designed the hand/finger end-effector for a 3D-printed robotic arm that beat 13 other teams to place 1st in a live Rock-Paper-Scissors competition.",
-    role: "Mechanical Design Engineer — Hand/Finger End-Effector",
+    oneLiner: "Designed the hand/finger end-effector for a 3D-printed robotic arm that placed 1st of 14 teams in a live Rock-Paper-Scissors competition.",
+    role: "Mechanical Designer: designed the hand/finger end-effector (solo). Arm built by the 6-person team.",
     timeframe: "Jan 2025 – May 2025",
     category: "Mechanical Design",
-    tags: ["SolidWorks", "CAD", "Manufacturing", "3D Printing"],
+    tags: ["SolidWorks", "CAD", "3D Printing", "Tolerance Corrections"],
     status: "Draft Written",
     featured: true,
     media: {
@@ -157,11 +114,10 @@ const PROJECTS = [
         assemble a BCN3D Moveo robotic arm with a hand/finger end-effector that could form rock,
         paper, and scissors gestures on a button press — which randomly generated the arm's move
         — and compete head-to-head against other teams.`,
-      contribution: `I was the Mechanical Design Engineer for the robotic hand: I helped
-        articulate the hand/finger concept used to play rock-paper-scissors and collaborated with
-        the team to manufacture the rest of the arm. I addressed manufacturing design risks and
-        improved arm joint stability by roughly 25% through iterative CAD modifications and
-        assembly tolerancing, and helped define the project phases and a team calibration plan.`,
+      contribution: `I was the Mechanical Designer for the robotic hand: I designed the
+        hand/finger end-effector on my own in SolidWorks and worked with the team to manufacture
+        the rest of the arm. Through iterative CAD changes and assembly tolerance corrections I
+        improved joint stability by an estimated ~25% (an estimate, not a measurement).`,
       approach: `I modeled the hand and finger assemblies in SOLIDWORKS and fabricated the
         components via 3D printing on Bambu A1 printers. The initial finger-actuation design used
         spools mounted on each servo to wind thread that opened and closed the fingers — one spool
@@ -171,9 +127,9 @@ const PROJECTS = [
         (not 360°), which wasn't enough range to wind and unwind the thread as designed. I
         scrapped the spool mechanism and redesigned around cross-shaped and straight servo horns,
         which successfully actuated the fingers within the servos' available range of motion.
-        Body components were 3D printed and assembled into the full arm; stepper motors were wired
-        to their drivers, and an Arduino was programmed to control movement and execute the
-        rock-paper-scissors gestures on a button press.`,
+        The team 3D printed and assembled the full arm, wired the stepper motors to their drivers,
+        and ran an Arduino controller to execute the rock-paper-scissors gestures on a button
+        press.`,
       challenges: `<ul>
           <li><strong>Spool-and-thread actuation didn't work</strong> — the servos' 180° range
             couldn't wind/unwind the thread as designed, so I redesigned the mechanism around
@@ -182,9 +138,9 @@ const PROJECTS = [
             teeth strong enough to grip the servo shaft. Fixed last-minute by securing the horns
             with super glue, which held through the competition; a metal horn with a clamping
             mechanism would be the more durable long-term fix.</li>
-          <li><strong>Joint stability</strong> was improved roughly 25% through iterative CAD
-            modifications and assembly tolerancing, addressing manufacturing design risks
-            identified during early prototyping.</li>
+          <li><strong>Joint stability</strong> was improved by an estimated ~25% through iterative
+            CAD modifications and assembly tolerance corrections. This is my estimate; I did not
+            measure it.</li>
           <li><strong>Weight</strong> — reduced infill density from 20% to 15% to lighten the
             hand, though the overall design remained bulkier than ideal.</li>
         </ul>`,
@@ -200,14 +156,67 @@ const PROJECTS = [
     },
   },
   {
-    id: "quadrotor",
-    name: "Autonomous GPS-Denied Indoor Quadrotor",
-    course: "Solo Build",
-    oneLiner: "Designing and building a 250mm autonomous quadrotor for GPS-denied indoor navigation — custom CAD airframe, two-bus electrical architecture, and an ArduPilot flight stack.",
-    role: "Solo builder — mechanical design, electrical integration, firmware, and autonomy, end to end.",
-    timeframe: "Mar 2026 – Present",
+    id: "legged-walking-robot",
+    name: "Legged Walking Robot — Mechanism Design to Team Build",
+    course: "MAE 183, Computer-Aided Mechanical Design",
+    oneLiner: "Carried a four-bar leg mechanism from kinematic design and simulated CAD through a physically built, team-fabricated 8-leg walking robot.",
+    role: "Individual: leg-mechanism kinematics & CAD (sole designer). Team build: Team Member, wiring the electronics and assembling one leg mechanism.",
+    timeframe: "Spring – Jun 2026",
     category: "Robotics",
-    tags: ["CAD", "FEA", "Controls", "Manufacturing", "NVIDIA Isaac Sim"],
+    tags: ["CAD", "SolidWorks", "Simulation", "Arduino", "Manufacturing"],
+    status: "Draft Written",
+    featured: true,
+    hidePageDiagram: true, // the diagram is the home-page card image only; the project page skips it
+    media: { type: "diagram", key: "fourbar" },
+    sections: {
+      problem: `MAE 183 (computer-aided mechanical design) ran as a two-stage arc: first an
+        individual sequence synthesizing and validating a four-bar leg linkage in GeoGebra and
+        SolidWorks, then a ~6-person team project that took that same rectilinear-linkage concept
+        and built it into a physically fabricated walking robot. Together they cover the path from
+        planar kinematics to a driven physical prototype.`,
+      contribution: `<strong>Individual coursework:</strong> sole designer — kinematic linkage
+        synthesis in GeoGebra (comparing rectilinear, skew-pantograph, and pantograph foot-path
+        variants off a Klann-type mechanism), then full CAD modeling and SolidWorks Motion
+        Analysis of a quadruped walker built on the selected rectilinear linkage.<br><br>
+        <strong>Team build ("Bear Walker"):</strong> Team Member. I wired the motor, battery, and
+        Arduino/Bluetooth controller electronics and assembled one of the team's eight leg
+        mechanisms; the team assembled the full robot together. The Arduino code was provided by
+        the course professor.`,
+      approach: `Started from planar four-bar linkage theory: modeled a Klann-type leg mechanism
+        in GeoGebra as paired static/dynamic systems, compared three foot-path-generating
+        variants, then selected and iterated the rectilinear linkage through a full redesign pass.
+        Modeled the mechanism and a complete quadruped assembly in SolidWorks — gearmotor, spur
+        gear reduction, links, bearings, and hardware — and validated the design in simulation
+        with a Motion Analysis of forward, backward, and turning gait. The team then carried that
+        linkage into a physical build: laser-cut wood legs and body panels, an Arduino-based
+        controller (professor-provided code) with motor driver and Bluetooth module, and full
+        electrical wiring. Subsystems were tested incrementally (one half of the assembly over
+        Bluetooth) before full integration.`,
+      challenges: `The first-pass leg linkage didn't produce the foot-path shape needed for a
+        clean gait, so it was re-derived in GeoGebra and rebuilt in SolidWorks as a second
+        iteration. On the team build, coordinating eight leg mechanisms on one shared drivetrain
+        meant validating subsystems before full integration, and going from a CAD model to a
+        physical robot meant wiring the motor, battery, and controller together — the part of a
+        build that simulation doesn't exercise.`,
+      results: `Delivered a path from validated planar kinematics through a simulated CAD assembly
+        (individual) to a team-fabricated, physically built 8-leg walking robot with Bluetooth
+        control (team), plus a SolidWorks Motion Analysis showing the quadruped's gait in
+        simulation.`,
+    },
+    subProjects: ["quadruped-individual", "bear-walker-team"],
+    photoNeeds: [
+      "Optional overview shot: both robots side by side (Snorlax CAD + physical Bear Walker) for the top of the page",
+    ],
+  },
+  {
+    id: "quadrotor",
+    name: "GPS-Denied Indoor Quadrotor (Build in Progress)",
+    course: "Independent Project",
+    oneLiner: "Building a 250 mm quadrotor intended for GPS-denied indoor navigation: custom CAD parts, a redesigned and FEA-compared 3D-printed prop guard, and a built airframe awaiting flight-controller bring-up.",
+    role: "Independent Project Lead: component selection, full-assembly CAD, custom parts, prop-guard redesign and FEA, hardware build.",
+    timeframe: "Sep 2026 – Present",
+    category: "Robotics",
+    tags: ["CAD", "SolidWorks", "FEA", "3D Printing"],
     status: "In Progress",
     featured: true,
     media: { type: "diagram", key: "quadrotor" },
@@ -215,32 +224,34 @@ const PROJECTS = [
     photoNeeds: [
       "SolidWorks render of the full 250mm airframe assembly",
       "Photos of the printed TPU 4-spoke prop guards and the vibration-isolated FC mount",
-      "Wiring: the two-bus layout (high-current power bus vs. low-current signal bus)",
-      "Current-limited smoke-test setup",
       "Photo of the assembled quadrotor in its current state",
+      "A weighed (not CAD) mass of the printed v2 guard",
     ],
     sections: {
       problem: `GPS-based navigation fails in exactly the environments where autonomous systems
         are needed most — collapsed buildings, underground facilities, and dense indoor spaces
-        relevant to search-and-rescue. This project builds a 250mm quadrotor that can hold
-        position and navigate waypoints indoors using only onboard sensors, no GPS.`,
-      contribution: `Solo build, top to bottom: component selection, full-assembly CAD in
-        SolidWorks, custom TPU prop-guard design, ESC/FC wiring and configuration, ArduPilot
-        setup, and (planned) validating autonomy logic in NVIDIA Isaac Sim before it goes on
+        relevant to search-and-rescue. This project is a 250 mm quadrotor intended to hold position
+        and navigate indoors using only onboard sensors, no GPS.`,
+      contribution: `Independent Project Lead on a solo build: component selection, full-assembly
+        CAD in SolidWorks, a vibration-isolated flight-controller mount and 4-spoke TPU prop guards
+        modeled from scratch, the prop-guard redesign and its FEA comparison, and building the
         hardware.`,
-      approach: `An onboard estimator on ArduPilot combines IMU, optical-flow, and barometer
-        readings for GPS-denied position holds. Custom parts — a vibration-isolated FC mount and
-        4-spoke TPU prop guards — were modeled from scratch rather than sourced. Next up:
-        building out an Isaac Sim environment to test navigation logic safely before it ever
-        touches the physical airframe.`,
-      challenges: `Iterative tolerance correction on the 3D-printed prop guards to fit the frame
-        without adding vibration; a two-bus wiring architecture (high-current power bus kept
-        physically separate from the low-current signal bus) to avoid a class of wiring failures
-        common in scratch builds; a current-limited "smoke test" protocol before ever connecting a
-        full battery, to catch wiring mistakes before they become visible damage.`,
-      results: `In progress — Phase 1 of 5 (hardware foundation). Target milestones: stable
-        indoor position hold within ±15cm (Phase 3) and a 4-waypoint autonomous indoor mission
-        with no human intervention (Phase 4). Prop-guard redesign so far: v1 to v2 cut mass 35.6% (77.1 g to 49.7 g), with an FEA stiffness comparison in the write-up below.`,
+      approach: `<strong>Where it stands:</strong> the airframe is designed and built. The motors
+        have not been run and the flight controller is not configured yet, so nothing has flown.
+        <br><br><strong>Planned:</strong> an ArduPilot flight controller fusing IMU, optical-flow,
+        and barometer readings, with a ROS 2 companion computer for mission planning. Neither is
+        set up.<br><br><strong>Done so far is mechanical:</strong> custom parts modeled from
+        scratch rather than sourced, and a prop guard redesigned, printed in TPU, and compared by
+        FEA (see the component write-up below).`,
+      challenges: `The printed v2 prop guard fits the frame after iterative tolerance
+        corrections, but it is heavier than I want, so a lighter iteration is the next design
+        step. Its mass numbers so far come from CAD, not a scale, and the FEA has not been checked
+        against a physical test.`,
+      results: `In progress. <strong>Done:</strong> airframe CAD, built hardware, and a prop-guard
+        redesign from v1 to v2 that cut CAD mass 35.6% (77.1 g to 49.7 g), with an FEA stiffness
+        comparison below. <strong>Not done:</strong> flight-controller configuration, running the
+        motors, and any flight. <strong>Next:</strong> bring-up, a lighter guard iteration, and a
+        physical deflection test of the printed guard.`,
     },
   },
 
@@ -250,7 +261,7 @@ const PROJECTS = [
     course: "Quadrotor component",
     isSubProject: true,
     parent: "quadrotor",
-    oneLiner: "Redesigned the 3D-printed TPU prop guard to cut mass 35.6%, then compared v1 and v2 with large-displacement FEA in SolidWorks Simulation.",
+    oneLiner: "Redesigned the 3D-printed TPU prop guard to cut CAD mass 35.6%, then compared v1 and v2 with large-displacement FEA in SolidWorks Simulation.",
     role: "Solo: CAD, simulation setup, and analysis",
     timeframe: "Oct 2026",
     tags: ["CAD", "SolidWorks", "FEA", "3D Printing"],
@@ -284,7 +295,8 @@ const PROJECTS = [
         treat the 2 N runs as the edge of the reliable range. Peak stress also sits at the spoke
         roots next to the fixed hub holes, where fixtures create artificial hot spots, so I read
         stress along the spokes and have not yet run a mesh-convergence check.`,
-      results: `<strong>Mass:</strong> 77.09 g to 49.65 g (-35.6%). Volume -35.6%, surface area -29.3%.<br><br>
+      results: `<strong>Mass (CAD mass properties, not weighed):</strong> 77.09 g to 49.65 g
+        (-35.6%). Volume -35.6%, surface area -29.3%.<br><br>
         <strong>FEA, max displacement / peak stress at the same load:</strong><br>
         0.5 N: v1 7.41 mm / 0.37 MPa &middot; v2 9.06 mm / 0.56 MPa<br>
         1 N: v1 17.90 mm / 0.90 MPa &middot; v2 23.15 mm / 1.33 MPa<br>
@@ -294,8 +306,10 @@ const PROJECTS = [
         below the 18 MPa yield strength at every load I ran.`,
       takeaways: `A linear-elastic model of a hyperelastic printed material is good for comparing
         two designs, not for predicting failure, so I am presenting these as design-to-design
-        comparisons. Next is a physical check: hang known weights on the rim of the printed guard
-        and compare the measured deflection with the 7.4 mm (v1) and 9.1 mm (v2) predicted at 0.5 N.`,
+        comparisons. The printed v2 fits the frame but still feels heavy, so I plan a lighter
+        iteration next. A physical check is also planned: hang known weights on the rim of the
+        printed guard and compare the measured deflection with the 7.4 mm (v1) and 9.1 mm (v2)
+        predicted at 0.5 N.`,
     },
   },
 
@@ -346,32 +360,34 @@ const PROJECTS = [
     course: "MAE 183, team final project",
     isSubProject: true,
     parent: "legged-walking-robot",
-    oneLiner: "6-person MAE 183 team designed, fabricated, and drove a physical 8-leg rectilinear-linkage walking robot; owned electronics/wiring and one leg subsystem.",
-    role: "Electronics & Electrical Systems — motor wiring, battery connection, and Arduino controller integration",
+    oneLiner: "6-person MAE 183 team built a physical 8-leg rectilinear-linkage walking robot; I wired the electronics and assembled one leg mechanism.",
+    role: "Team Member — wired the motor, battery, and Arduino/Bluetooth controller electronics; assembled one leg mechanism",
     timeframe: "Spring 2026",
-    tags: ["Arduino/C++", "Manufacturing", "Controls"],
+    tags: ["Arduino", "Wiring", "Manufacturing"],
     status: "Draft Written",
     media: {
       type: "photos",
       items: [
         { src: "images/bear-walker-cad.png", alt: "CAD render of the Bear Walker's laser-cut leg mechanism and body panels", caption: "CAD assembly of the Bear Walker's leg mechanism" },
         { src: "images/bear-walker-manufactured.png", alt: "The fully fabricated, laser-cut wood Bear Walker robot held up for a photo", caption: "The fully fabricated Bear Walker, laser-cut and assembled" },
-        { src: "images/bear-walker-team-photo.png", alt: "The MAE 183 team working through the center-of-gravity calculation, with robot parts on the table", caption: "Working through the center-of-gravity calculation and final assembly" },
+        { src: "images/bear-walker-team-photo.png", alt: "The MAE 183 team during final assembly, with robot parts on the table", caption: "The team during final assembly" },
       ],
     },
     photoNeeds: [
       "Electronics close-ups: Arduino, motor driver, Bluetooth module, battery, and wiring",
       "The half-assembly Bluetooth test",
-      "The finished robot walking (photo or short clip/GIF)",
-      "The center-of-gravity calculation sheet and measured leg contact forces",
+      "The finished robot walking (photo or short clip/GIF), once the walking demonstration is confirmed",
       "The single leg mechanism you assembled",
     ],
     sections: {
       problem: `A ~6-person team took the rectilinear four-bar leg linkage concept and built it
-        into a physically fabricated, working walking robot — laser-cut wood construction with
-        Arduino + Bluetooth control.`,
-      results: `Verified electronics, a Bluetooth-driven test run, and a measured center of
-        gravity (CG ≈ (4.1, 4.1)) confirming real-world walking stability.`,
+        into a physically fabricated walking robot — laser-cut wood construction with
+        Arduino + Bluetooth control. The Arduino code was provided by the course professor.`,
+      contribution: `I wired the motor, battery, and Arduino/Bluetooth controller electronics and
+        assembled one of the eight leg mechanisms. The team assembled the full robot together.`,
+      results: `A team-fabricated, physically built 8-leg walking robot with Bluetooth control,
+        with subsystems tested incrementally (one half of the assembly over Bluetooth) before
+        full integration.`,
     },
   },
 ];
