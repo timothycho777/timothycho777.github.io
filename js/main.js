@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initNav();
   populateSiteText();
   renderSkills();
-  renderFilters();
   renderProjects();
   initHeroLinkage();
   initScrollSpy();
@@ -75,7 +74,7 @@ function initScrollSpy() {
 /* ---------- Static text from SITE ---------- */
 function populateSiteText() {
   document.getElementById('hero-name').textContent = SITE.name;
-  document.getElementById('hero-role').textContent = `${SITE.role} · ${SITE.school}`;
+  document.getElementById('hero-role').innerHTML = `<span>${SITE.role}</span><span>${SITE.school}</span>`;
   document.getElementById('hero-tagline').textContent = SITE.tagline;
   document.getElementById('about-text').innerHTML = SITE.about.split('\n\n').map(p => `<p>${p.trim()}</p>`).join('');
 
@@ -93,9 +92,6 @@ function populateSiteText() {
 
   document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-  document.getElementById('hero-stats').innerHTML = (SITE.stats || []).map(s => `
-    <div class="hero-stat"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>
-  `).join('');
 }
 
 /* ---------- Skills ---------- */
@@ -159,9 +155,9 @@ function projectCardHTML(project, index) {
     <a class="project-card" href="project.html?id=${project.id}" data-category="${project.category}" id="project-${project.id}" style="transition-delay:${Math.min(index * 60, 300)}ms" aria-label="Open project: ${project.name}">
       <div class="card-media">
         ${mediaHTML(project)}
-        ${project.featured ? '<span class="featured-badge">Featured</span>' : ''}
       </div>
       <div class="card-body">
+        ${project.result ? `<div class="card-result">${project.result.num}</div><p class="card-result-label">${project.result.label}</p>` : ''}
         <div class="card-meta">
           <span>${project.course || ''}</span>
           <span>${project.timeframe}</span>

@@ -82,6 +82,7 @@ const CATEGORIES = ["All", "Mechanical Design", "Robotics"];
 const PROJECTS = [
   {
     id: "zotbotics-arm",
+    result: { num: "1st of 14", label: "Team result, rock-paper-scissors robot-arm competition" },
     name: "ZOTBotics — Robot Arm",
     course: "UCI ZOTBotics Makerspace (ZIMS)",
     oneLiner: "Designed the hand/finger end-effector for a 3D-printed robotic arm that placed 1st of 14 teams in a live Rock-Paper-Scissors competition.",
@@ -157,6 +158,7 @@ const PROJECTS = [
   },
   {
     id: "legged-walking-robot",
+    result: { num: "8 legs", label: "Team-built walking robot" },
     name: "Legged Walking Robot — Mechanism Design to Team Build",
     course: "MAE 183, Computer-Aided Mechanical Design",
     oneLiner: "Carried a four-bar leg mechanism from kinematic design and simulated CAD through a physically built, team-fabricated 8-leg walking robot.",
@@ -210,6 +212,7 @@ const PROJECTS = [
   },
   {
     id: "quadrotor",
+    result: { num: "−35.6%", label: "Prop-guard mass, v1 to v2 (CAD mass)" },
     name: "GPS-Denied Indoor Quadrotor (Build in Progress)",
     course: "Independent Project",
     oneLiner: "Building a 250 mm quadrotor intended for GPS-denied indoor navigation: custom CAD parts, a redesigned and FEA-compared 3D-printed prop guard, and a built airframe awaiting flight-controller bring-up.",

@@ -157,7 +157,7 @@ function diagramHTML(project) {
 function areaHTML(sub, index, total) {
   return `
     <section class="proj-area" id="area-${sub.id}">
-      <div class="eyebrow">Part ${index + 1} of ${total}${sub.course ? ' · ' + sub.course : ''}</div>
+      <div class="eyebrow">${sub.course ? sub.course + ', part ' : 'Part '}${index + 1} of ${total}</div>
       <h2>${sub.name}</h2>
       ${statusPillHTML(sub.status)}
       <p class="proj-lede">${sub.oneLiner}</p>

@@ -6,10 +6,9 @@
   <title>Timothy Cho | Mechanical Engineering Portfolio</title>
   <meta name="description" content="Timothy Cho — mechanical engineering student at UC Irvine (B.S., scheduled June 2027). SolidWorks CAD and FEA, 3D-printed prototypes, and electromechanical builds." />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <link rel="preload" href="fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/manrope-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -36,7 +35,6 @@
     <!-- ===== Hero ===== -->
     <section class="hero wrap">
       <div class="hero-text">
-        <div class="eyebrow">Mechanical Engineering Portfolio</div>
         <h1 id="hero-name">Timothy Cho</h1>
         <p class="hero-role" id="hero-role">Mechanical Engineering Student</p>
         <p class="hero-tagline" id="hero-tagline"></p>
@@ -44,10 +42,9 @@
           <a href="#projects" class="btn btn-primary">View Projects</a>
           <a href="#contact" class="btn btn-outline">Get in Touch</a>
         </div>
-        <div class="hero-stats" id="hero-stats"></div>
       </div>
       <div class="hero-visual">
-        <span class="tag">FIG. 1 — FOUR-BAR LINKAGE, LIVE</span>
+        <span class="tag">Fig. 1: Four-bar linkage (live)</span>
         <div id="hero-linkage" style="width:100%;height:100%;"></div>
       </div>
     </section>
@@ -55,20 +52,17 @@
     <!-- ===== Projects ===== -->
     <section id="projects" class="wrap">
       <div class="section-head">
-        <div class="section-num">01 / Selected Work</div>
         <h2 class="section-title">Projects</h2>
-        <p class="section-sub">Filter by discipline, then click any project to open its full write-up — problem, approach, challenges, results, and photos.</p>
+        <p class="section-sub">Each project opens to a full write-up: problem, approach, challenges, results and photos.</p>
       </div>
-      <div class="filter-bar" id="filter-bar"></div>
       <div class="project-grid" id="project-grid"></div>
     </section>
 
     <!-- ===== Skills ===== -->
     <section id="skills" class="wrap">
       <div class="section-head">
-        <div class="section-num">02 / Skills</div>
         <h2 class="section-title">Toolkit</h2>
-        <p class="section-sub">Grouped by where they show up in the build — from first sketch to working hardware.</p>
+        <p class="section-sub">From first sketch to working hardware.</p>
       </div>
       <div class="skills-grid" id="skills-grid"></div>
     </section>
@@ -76,8 +70,7 @@
     <!-- ===== About ===== -->
     <section id="about" class="wrap">
       <div class="section-head">
-        <div class="section-num">03 / About</div>
-        <h2 class="section-title">Design → build → test, on repeat</h2>
+        <h2 class="section-title">Design, build, test, repeat</h2>
       </div>
       <div class="about-grid">
         <div class="about-text" id="about-text" data-reveal></div>
