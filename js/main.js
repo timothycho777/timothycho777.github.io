@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initNav();
   populateSiteText();
   renderSkills();
-  renderFilters();
   renderProjects();
   initHeroLinkage();
   initScrollSpy();
@@ -93,9 +92,6 @@ function populateSiteText() {
 
   document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-  document.getElementById('hero-stats').innerHTML = (SITE.stats || []).map(s => `
-    <div class="hero-stat"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>
-  `).join('');
 }
 
 /* ---------- Skills ---------- */
@@ -161,6 +157,7 @@ function projectCardHTML(project, index) {
         ${mediaHTML(project)}
       </div>
       <div class="card-body">
+        ${project.result ? `<div class="card-result">${project.result.num}</div><p class="card-result-label">${project.result.label}</p>` : ''}
         <div class="card-meta">
           <span>${project.course || ''}</span>
           <span>${project.timeframe}</span>
