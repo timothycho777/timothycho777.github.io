@@ -115,7 +115,7 @@ const DIAGRAMS = {
       </g>
       <text x="53" y="168" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--accent)">DONE</text>
       <text x="213" y="168" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--ink-faint)">PLANNED</text>
-      <text x="200" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--ink-faint)">3-MOTOR HYBRID VTOL: DESIGN PHASE</text>
+      <text x="200" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--ink-faint)">SENIOR CAPSTONE: DESIGN PHASE</text>
     </svg>`,
 
   bearwalker: `

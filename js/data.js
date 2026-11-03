@@ -88,7 +88,7 @@ const PROJECTS = [
     name: "One Way Attritable Drone (Senior Capstone, Design Phase)",
     course: "MAE 151A/151B, Senior Capstone",
     oneLiner: "Five-person UC Irvine senior capstone team designing a low-cost autonomous aircraft in response to a Dassault Systèmes request for proposal. Currently in the design phase; I made the conceptual CAD in SolidWorks.",
-    role: "Team Member (5 students; roles not yet assigned). Made the conceptual CAD: a simple three-motor hybrid fixed-wing VTOL.",
+    role: "Team Member (5 students; roles not yet assigned). Made the conceptual CAD in SolidWorks.",
     timeframe: "Fall 2026 – Present",
     category: "Aerospace",
     tags: ["CAD", "SolidWorks", "Conceptual Design", "UAS"],
@@ -110,17 +110,16 @@ const PROJECTS = [
         mentoring and hardware funding. The year ends with a multi-school flyoff planned for
         June 2027.`,
       contribution: `Team Member on a five-person team; roles have not been assigned yet. I made
-        the conceptual CAD in SolidWorks: a very simple three-motor hybrid fixed-wing VTOL (vertical
-        takeoff and landing) layout.`,
+        the conceptual CAD in SolidWorks. Design specifics are not published yet.`,
       approach: `<strong>Where it stands:</strong> the team is in the design phase, and the
         conceptual CAD exists. There are no analysis results, hardware or flight tests to report
         yet.<br><br><strong>How the program runs:</strong> a sequence of design reviews, from
         requirements through preliminary and critical design, then a flight readiness review where
         the aircraft must have flown, ahead of the flyoff. Requirements, architecture, geometry,
         analysis and cost are expected to stay connected in Dassault's 3DEXPERIENCE platform.`,
-      results: `In progress. <strong>Done so far:</strong> a conceptual CAD of a three-motor hybrid
-        VTOL layout. <strong>Nothing to report yet:</strong> analysis results, hardware, or flight
-        tests. This page will be updated as the design matures.`,
+      results: `In progress. <strong>Done so far:</strong> a conceptual CAD. <strong>Nothing to
+        report yet:</strong> analysis results, hardware, or flight tests. This page will be updated
+        as the design matures.`,
     },
   },
   {
