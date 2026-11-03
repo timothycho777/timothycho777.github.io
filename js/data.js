@@ -72,6 +72,8 @@ const CATEGORIES = ["All", "Mechanical Design", "Robotics", "Aerospace"];
    media.videos - optional list of { src: "videos/x.mp4", poster?: "images/x.jpg", caption } shown
                   in a Videos section on the project page (works with any media type)
    hidePageDiagram - true to skip the diagram on the project page (card still shows it)
+   thumb        - optional { src, alt, focus? }: image used ONLY as the home-page card
+                  thumbnail, overriding media (the project page is unaffected)
    focus        - optional on a photo item: CSS object-position for cropped views
                   (cards and gallery tiles), e.g. "50% 0%" keeps the top of the photo
    photoNeeds   - NOT rendered; a checklist of pictures still wanted for this project.
@@ -239,6 +241,7 @@ const PROJECTS = [
     featured: true,
     hidePageDiagram: true, // the diagram is the home-page card image only; the project page skips it
     media: { type: "diagram", key: "fourbar" },
+    thumb: { src: "images/bear-walker-cad.png", alt: "CAD assembly of the Bear Walker's laser-cut leg mechanism and body panels" },
     sections: {
       problem: `MAE 183 (computer-aided mechanical design) ran as a two-stage arc: first an
         individual sequence synthesizing and validating a four-bar leg linkage in GeoGebra and

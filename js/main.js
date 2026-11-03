@@ -139,6 +139,10 @@ function statusPillHTML(status) {
 }
 
 function mediaHTML(project) {
+  if (project.thumb) {
+    const pos = project.thumb.focus ? ` style="object-position:${project.thumb.focus}"` : '';
+    return `<img src="${project.thumb.src}" alt="${project.thumb.alt}" loading="lazy"${pos}>`;
+  }
   if (!project.media) return diagramSVG('fourbar');
   if (project.media.type === 'photos') {
     const first = project.media.items[0];
