@@ -92,6 +92,32 @@ const DIAGRAMS = {
       </defs>
     </svg>`,
 
+  // Design-phase roadmap for the senior capstone. Deliberately NOT a drawing of the
+  // aircraft: it shows only the stage reached (concept CAD) and the stages still ahead.
+  capstone: `
+    <svg viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capstone design roadmap: concept CAD done, later stages planned">
+      <rect width="400" height="260" fill="var(--bg-inset)"/>
+      <line x1="40" y1="120" x2="360" y2="120" stroke="var(--ink-faint)" stroke-width="1.6" stroke-dasharray="3 4"/>
+      <rect x="22" y="96" width="62" height="48" rx="5" fill="var(--accent)"/>
+      <text x="53" y="117" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--on-accent)">CONCEPT</text>
+      <text x="53" y="129" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--on-accent)">CAD</text>
+      <g stroke="var(--blue)" stroke-width="1.8" fill="var(--bg-elevated)">
+        <rect x="92" y="96" width="62" height="48" rx="5" stroke-dasharray="4 3"/>
+        <rect x="162" y="96" width="62" height="48" rx="5" stroke-dasharray="4 3"/>
+        <rect x="232" y="96" width="62" height="48" rx="5" stroke-dasharray="4 3"/>
+        <rect x="302" y="96" width="62" height="48" rx="5" stroke-dasharray="4 3"/>
+      </g>
+      <g font-family="var(--font-sans)" font-size="8" fill="var(--blue)" text-anchor="middle">
+        <text x="123" y="117">TRADE</text><text x="123" y="129">STUDIES</text>
+        <text x="193" y="117">DETAILED</text><text x="193" y="129">DESIGN</text>
+        <text x="263" y="123">BUILD</text>
+        <text x="333" y="117">FLIGHT</text><text x="333" y="129">TEST</text>
+      </g>
+      <text x="53" y="168" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--accent)">DONE</text>
+      <text x="213" y="168" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="var(--ink-faint)">PLANNED</text>
+      <text x="200" y="60" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--ink-faint)">3-MOTOR HYBRID VTOL: DESIGN PHASE</text>
+    </svg>`,
+
   bearwalker: `
     <svg viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Eight-leg rectilinear walking robot schematic">
       <rect width="400" height="260" fill="var(--bg-inset)"/>

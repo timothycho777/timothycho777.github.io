@@ -56,7 +56,7 @@ const SKILL_GROUPS = [
 ];
 
 // Category filter keys must match `category` on each project below.
-const CATEGORIES = ["All", "Mechanical Design", "Robotics"];
+const CATEGORIES = ["All", "Mechanical Design", "Robotics", "Aerospace"];
 
 /* Each project:
    id           - slug, used for anchors
@@ -78,137 +78,48 @@ const CATEGORIES = ["All", "Mechanical Design", "Robotics"];
                   Add images to media.items as they arrive (images/<name>.png|jpg).
    Each project's page is project.html?id=<id>.
    Order in this array = order on the home page and in the prev/next pager.
+   Keep top-level projects MOST RECENT FIRST (by start date; current work on top).
 */
 const PROJECTS = [
   {
-    id: "zotbotics-arm",
-    result: { num: "1st of 14", label: "Team result, rock-paper-scissors robot-arm competition" },
-    name: "ZOTBotics — Robot Arm",
-    course: "UCI ZOTBotics Makerspace (ZIMS)",
-    oneLiner: "Designed the hand/finger end-effector for a 3D-printed robotic arm that placed 1st of 14 teams in a live Rock-Paper-Scissors competition.",
-    role: "Mechanical Designer: designed the hand/finger end-effector (solo). Arm built by the 6-person team.",
-    timeframe: "Jan 2025 – May 2025",
-    category: "Mechanical Design",
-    tags: ["SolidWorks", "CAD", "3D Printing", "Tolerance Corrections"],
-    status: "Draft Written",
+    id: "attritable-drone-capstone",
+    name: "One Way Attritable Drone (Senior Capstone, Design Phase)",
+    course: "MAE 151A/151B, Senior Capstone",
+    oneLiner: "Five-person UC Irvine senior capstone team designing a low-cost autonomous aircraft in response to a Dassault Systèmes request for proposal. Currently in the design phase; I made the conceptual CAD in SolidWorks.",
+    role: "Team Member (5 students; roles not yet assigned). Made the conceptual CAD: a simple three-motor hybrid fixed-wing VTOL.",
+    timeframe: "Fall 2026 – Present",
+    category: "Aerospace",
+    tags: ["CAD", "SolidWorks", "Conceptual Design", "UAS"],
+    status: "In Progress",
     featured: true,
-    media: {
-      type: "photos",
-      items: [
-        { src: "images/zotbotics-arm.jpg", focus: "50% 0%", alt: "Assembled BCN3D Moveo robotic arm with 3D-printed hand end-effector, mounted on a demo stand", caption: "Assembled arm with the 3D-printed hand end-effector" },
-        { src: "images/zotbotics-team.jpg", alt: "Six-person ZOTBotics team posing with the finished robotic arm after placing 1st", caption: "The team after placing 1st of 14 in the Rock-Paper-Scissors competition" },
-        { src: "images/zotbotics-cad-1.jpg", alt: "SolidWorks CAD model of the robotic hand assembly, left dimetric view", caption: "CAD model of the hand assembly: left dimetric view" },
-        { src: "images/zotbotics-cad-2.jpg", alt: "SolidWorks CAD model of the robotic hand assembly, right dimetric view", caption: "CAD model of the hand assembly: right dimetric view" },
-        { src: "images/zotbotics-cad-3.jpg", alt: "CAD model of a fully assembled finger in the closed position, isometric view", caption: "Fully assembled finger, closed position (isometric)" },
-        { src: "images/zotbotics-cad-4.jpg", alt: "CAD model of a fully assembled finger in the open position, isometric view", caption: "Fully assembled finger, open position (isometric)" },
-      ],
-    },
+    media: { type: "diagram", key: "capstone" },
     photoNeeds: [
-      "Original spool-and-thread design vs. the redesigned servo-horn design (CAD or photo)",
-      "Close-up of the fingers actuating (rock / paper / scissors gestures)",
-      "Action shot from the competition / final tournament",
-      "Optional: the servo-horn slip fix, or the 20% to 15% infill comparison",
+      "SolidWorks render of the conceptual CAD, once the instructors and teammates agree it can be shown publicly",
+      "Team photo",
+      "Later: analysis plots, build photos and test results as they exist",
     ],
     sections: {
-      problem: `As part of ZOTBotics' Introductory Makerspace (ZIMS) program at UC Irvine, I
-        worked with a team of six over five months (January–May 2025) to design, 3D print, and
-        assemble a BCN3D Moveo robotic arm with a hand/finger end-effector that could form rock,
-        paper, and scissors gestures on a button press — which randomly generated the arm's move
-        — and compete head-to-head against other teams.`,
-      contribution: `I was the Mechanical Designer for the robotic hand: I designed the
-        hand/finger end-effector on my own in SolidWorks and worked with the team to manufacture
-        the rest of the arm. Through iterative CAD changes and assembly tolerance corrections I
-        improved joint stability by an estimated ~25% (an estimate, not a measurement).`,
-      approach: `I modeled the hand and finger assemblies in SOLIDWORKS and fabricated the
-        components via 3D printing on Bambu A1 printers. The initial finger-actuation design used
-        spools mounted on each servo to wind thread that opened and closed the fingers — one spool
-        on the palm pulling the top two fingers down, a second spool behind the fingers pulling
-        them back up, with the thread guided through small loops at the fingertips; the thumb used
-        the same two-spool concept. That approach failed in practice: the servos only rotate 180°
-        (not 360°), which wasn't enough range to wind and unwind the thread as designed. I
-        scrapped the spool mechanism and redesigned around cross-shaped and straight servo horns,
-        which successfully actuated the fingers within the servos' available range of motion.
-        The team 3D printed and assembled the full arm, wired the stepper motors to their drivers,
-        and ran an Arduino controller to execute the rock-paper-scissors gestures on a button
-        press.`,
-      challenges: `<ul>
-          <li><strong>Spool-and-thread actuation didn't work</strong> — the servos' 180° range
-            couldn't wind/unwind the thread as designed, so I redesigned the mechanism around
-            cross-shaped and straight servo horns instead.</li>
-          <li><strong>Servo horns slipped under load</strong> — the plastic horns didn't have
-            teeth strong enough to grip the servo shaft. Fixed last-minute by securing the horns
-            with super glue, which held through the competition; a metal horn with a clamping
-            mechanism would be the more durable long-term fix.</li>
-          <li><strong>Joint stability</strong> was improved by an estimated ~25% through iterative
-            CAD modifications and assembly tolerance corrections. This is my estimate; I did not
-            measure it.</li>
-          <li><strong>Weight</strong> — reduced infill density from 20% to 15% to lighten the
-            hand, though the overall design remained bulkier than ideal.</li>
-        </ul>`,
-      results: `Delivered a complete, working robotic arm with a hand/finger end-effector that
-        formed rock, paper, and scissors gestures on a button press that randomly generated the
-        arm's move. Competing against 13 other teams in the final tournament, the team
-        <strong>placed 1st</strong>.`,
-      takeaways: `In a future iteration, I'd focus on slimming down the hand's overall weight and
-        bulkiness without compromising function — the infill reduction helped, but the design was
-        still bulkier than I'd like. I'd also switch from plastic to metal servo horns with a
-        clamping mechanism, which would grip the servo shaft securely and eliminate the slipping
-        issue that forced a super-glue fix.`,
+      problem: `Dassault Systèmes issued a request for proposal to university capstone teams for a
+        small, low-cost unmanned aircraft: cheap enough to lose, carried and launched by one person,
+        and flown with no pilot in the loop. The aircraft has to handle three kinds of mission:
+        autonomous waypoint navigation, delivering a small payload to a ground target, and ending
+        the flight by impacting a target. At UC Irvine the program runs through MAE 151A/151B with a
+        UCI faculty sponsor, and Dassault Systèmes provides the engineering environment, training,
+        mentoring and hardware funding. The year ends with a multi-school flyoff planned for
+        June 2027.`,
+      contribution: `Team Member on a five-person team; roles have not been assigned yet. I made
+        the conceptual CAD in SolidWorks: a very simple three-motor hybrid fixed-wing VTOL (vertical
+        takeoff and landing) layout.`,
+      approach: `<strong>Where it stands:</strong> the team is in the design phase, and the
+        conceptual CAD exists. There are no analysis results, hardware or flight tests to report
+        yet.<br><br><strong>How the program runs:</strong> a sequence of design reviews, from
+        requirements through preliminary and critical design, then a flight readiness review where
+        the aircraft must have flown, ahead of the flyoff. Requirements, architecture, geometry,
+        analysis and cost are expected to stay connected in Dassault's 3DEXPERIENCE platform.`,
+      results: `In progress. <strong>Done so far:</strong> a conceptual CAD of a three-motor hybrid
+        VTOL layout. <strong>Nothing to report yet:</strong> analysis results, hardware, or flight
+        tests. This page will be updated as the design matures.`,
     },
-  },
-  {
-    id: "legged-walking-robot",
-    result: { num: "8 legs", label: "Team-built walking robot" },
-    name: "Legged Walking Robot — Mechanism Design to Team Build",
-    course: "MAE 183, Computer-Aided Mechanical Design",
-    oneLiner: "Carried a four-bar leg mechanism from kinematic design and simulated CAD through a physically built, team-fabricated 8-leg walking robot.",
-    role: "Individual: leg-mechanism kinematics & CAD (sole designer). Team build: Team Member, wiring the electronics and assembling one leg mechanism.",
-    timeframe: "Spring – Jun 2026",
-    category: "Robotics",
-    tags: ["CAD", "SolidWorks", "Simulation", "Arduino", "Manufacturing"],
-    status: "Draft Written",
-    featured: true,
-    hidePageDiagram: true, // the diagram is the home-page card image only; the project page skips it
-    media: { type: "diagram", key: "fourbar" },
-    sections: {
-      problem: `MAE 183 (computer-aided mechanical design) ran as a two-stage arc: first an
-        individual sequence synthesizing and validating a four-bar leg linkage in GeoGebra and
-        SolidWorks, then a ~6-person team project that took that same rectilinear-linkage concept
-        and built it into a physically fabricated walking robot. Together they cover the path from
-        planar kinematics to a driven physical prototype.`,
-      contribution: `<strong>Individual coursework:</strong> sole designer — kinematic linkage
-        synthesis in GeoGebra (comparing rectilinear, skew-pantograph, and pantograph foot-path
-        variants off a Klann-type mechanism), then full CAD modeling and SolidWorks Motion
-        Analysis of a quadruped walker built on the selected rectilinear linkage.<br><br>
-        <strong>Team build ("Bear Walker"):</strong> Team Member. I wired the motor, battery, and
-        Arduino/Bluetooth controller electronics and assembled one of the team's eight leg
-        mechanisms; the team assembled the full robot together. The Arduino code was provided by
-        the course professor.`,
-      approach: `Started from planar four-bar linkage theory: modeled a Klann-type leg mechanism
-        in GeoGebra as paired static/dynamic systems, compared three foot-path-generating
-        variants, then selected and iterated the rectilinear linkage through a full redesign pass.
-        Modeled the mechanism and a complete quadruped assembly in SolidWorks — gearmotor, spur
-        gear reduction, links, bearings, and hardware — and validated the design in simulation
-        with a Motion Analysis of forward, backward, and turning gait. The team then carried that
-        linkage into a physical build: laser-cut wood legs and body panels, an Arduino-based
-        controller (professor-provided code) with motor driver and Bluetooth module, and full
-        electrical wiring. Subsystems were tested incrementally (one half of the assembly over
-        Bluetooth) before full integration.`,
-      challenges: `The first-pass leg linkage didn't produce the foot-path shape needed for a
-        clean gait, so it was re-derived in GeoGebra and rebuilt in SolidWorks as a second
-        iteration. On the team build, coordinating eight leg mechanisms on one shared drivetrain
-        meant validating subsystems before full integration, and going from a CAD model to a
-        physical robot meant wiring the motor, battery, and controller together — the part of a
-        build that simulation doesn't exercise.`,
-      results: `Delivered a path from validated planar kinematics through a simulated CAD assembly
-        (individual) to a team-fabricated, physically built 8-leg walking robot with Bluetooth
-        control (team), plus a SolidWorks Motion Analysis showing the quadruped's gait in
-        simulation.`,
-    },
-    subProjects: ["quadruped-individual", "bear-walker-team"],
-    photoNeeds: [
-      "Optional overview shot: both robots side by side (Snorlax CAD + physical Bear Walker) for the top of the page",
-    ],
   },
   {
     id: "quadrotor",
@@ -257,7 +168,6 @@ const PROJECTS = [
         physical deflection test of the printed guard.`,
     },
   },
-
   {
     id: "quadrotor-prop-guard",
     name: "Prop Guard Redesign and FEA (v1 to v2)",
@@ -315,7 +225,60 @@ const PROJECTS = [
         predicted at 0.5 N.`,
     },
   },
-
+  {
+    id: "legged-walking-robot",
+    result: { num: "8 legs", label: "Team-built walking robot" },
+    name: "Legged Walking Robot — Mechanism Design to Team Build",
+    course: "MAE 183, Computer-Aided Mechanical Design",
+    oneLiner: "Carried a four-bar leg mechanism from kinematic design and simulated CAD through a physically built, team-fabricated 8-leg walking robot.",
+    role: "Individual: leg-mechanism kinematics & CAD (sole designer). Team build: Team Member, wiring the electronics and assembling one leg mechanism.",
+    timeframe: "Spring – Jun 2026",
+    category: "Robotics",
+    tags: ["CAD", "SolidWorks", "Simulation", "Arduino", "Manufacturing"],
+    status: "Draft Written",
+    featured: true,
+    hidePageDiagram: true, // the diagram is the home-page card image only; the project page skips it
+    media: { type: "diagram", key: "fourbar" },
+    sections: {
+      problem: `MAE 183 (computer-aided mechanical design) ran as a two-stage arc: first an
+        individual sequence synthesizing and validating a four-bar leg linkage in GeoGebra and
+        SolidWorks, then a ~6-person team project that took that same rectilinear-linkage concept
+        and built it into a physically fabricated walking robot. Together they cover the path from
+        planar kinematics to a driven physical prototype.`,
+      contribution: `<strong>Individual coursework:</strong> sole designer — kinematic linkage
+        synthesis in GeoGebra (comparing rectilinear, skew-pantograph, and pantograph foot-path
+        variants off a Klann-type mechanism), then full CAD modeling and SolidWorks Motion
+        Analysis of a quadruped walker built on the selected rectilinear linkage.<br><br>
+        <strong>Team build ("Bear Walker"):</strong> Team Member. I wired the motor, battery, and
+        Arduino/Bluetooth controller electronics and assembled one of the team's eight leg
+        mechanisms; the team assembled the full robot together. The Arduino code was provided by
+        the course professor.`,
+      approach: `Started from planar four-bar linkage theory: modeled a Klann-type leg mechanism
+        in GeoGebra as paired static/dynamic systems, compared three foot-path-generating
+        variants, then selected and iterated the rectilinear linkage through a full redesign pass.
+        Modeled the mechanism and a complete quadruped assembly in SolidWorks — gearmotor, spur
+        gear reduction, links, bearings, and hardware — and validated the design in simulation
+        with a Motion Analysis of forward, backward, and turning gait. The team then carried that
+        linkage into a physical build: laser-cut wood legs and body panels, an Arduino-based
+        controller (professor-provided code) with motor driver and Bluetooth module, and full
+        electrical wiring. Subsystems were tested incrementally (one half of the assembly over
+        Bluetooth) before full integration.`,
+      challenges: `The first-pass leg linkage didn't produce the foot-path shape needed for a
+        clean gait, so it was re-derived in GeoGebra and rebuilt in SolidWorks as a second
+        iteration. On the team build, coordinating eight leg mechanisms on one shared drivetrain
+        meant validating subsystems before full integration, and going from a CAD model to a
+        physical robot meant wiring the motor, battery, and controller together — the part of a
+        build that simulation doesn't exercise.`,
+      results: `Delivered a path from validated planar kinematics through a simulated CAD assembly
+        (individual) to a team-fabricated, physically built 8-leg walking robot with Bluetooth
+        control (team), plus a SolidWorks Motion Analysis showing the quadruped's gait in
+        simulation.`,
+    },
+    subProjects: ["quadruped-individual", "bear-walker-team"],
+    photoNeeds: [
+      "Optional overview shot: both robots side by side (Snorlax CAD + physical Bear Walker) for the top of the page",
+    ],
+  },
   /* --- Component write-ups (reachable from the consolidated Legged Walking
      Robot entry above; not shown in the main filterable grid). --- */
   {
@@ -391,6 +354,82 @@ const PROJECTS = [
       results: `A team-fabricated, physically built 8-leg walking robot with Bluetooth control,
         with subsystems tested incrementally (one half of the assembly over Bluetooth) before
         full integration.`,
+    },
+  },
+  {
+    id: "zotbotics-arm",
+    result: { num: "1st of 14", label: "Team result, rock-paper-scissors robot-arm competition" },
+    name: "ZOTBotics — Robot Arm",
+    course: "UCI ZOTBotics Makerspace (ZIMS)",
+    oneLiner: "Designed the hand/finger end-effector for a 3D-printed robotic arm that placed 1st of 14 teams in a live Rock-Paper-Scissors competition.",
+    role: "Mechanical Designer: designed the hand/finger end-effector (solo). Arm built by the 6-person team.",
+    timeframe: "Jan 2025 – May 2025",
+    category: "Mechanical Design",
+    tags: ["SolidWorks", "CAD", "3D Printing", "Tolerance Corrections"],
+    status: "Draft Written",
+    featured: true,
+    media: {
+      type: "photos",
+      items: [
+        { src: "images/zotbotics-arm.jpg", focus: "50% 0%", alt: "Assembled BCN3D Moveo robotic arm with 3D-printed hand end-effector, mounted on a demo stand", caption: "Assembled arm with the 3D-printed hand end-effector" },
+        { src: "images/zotbotics-team.jpg", alt: "Six-person ZOTBotics team posing with the finished robotic arm after placing 1st", caption: "The team after placing 1st of 14 in the Rock-Paper-Scissors competition" },
+        { src: "images/zotbotics-cad-1.jpg", alt: "SolidWorks CAD model of the robotic hand assembly, left dimetric view", caption: "CAD model of the hand assembly: left dimetric view" },
+        { src: "images/zotbotics-cad-2.jpg", alt: "SolidWorks CAD model of the robotic hand assembly, right dimetric view", caption: "CAD model of the hand assembly: right dimetric view" },
+        { src: "images/zotbotics-cad-3.jpg", alt: "CAD model of a fully assembled finger in the closed position, isometric view", caption: "Fully assembled finger, closed position (isometric)" },
+        { src: "images/zotbotics-cad-4.jpg", alt: "CAD model of a fully assembled finger in the open position, isometric view", caption: "Fully assembled finger, open position (isometric)" },
+      ],
+    },
+    photoNeeds: [
+      "Original spool-and-thread design vs. the redesigned servo-horn design (CAD or photo)",
+      "Close-up of the fingers actuating (rock / paper / scissors gestures)",
+      "Action shot from the competition / final tournament",
+      "Optional: the servo-horn slip fix, or the 20% to 15% infill comparison",
+    ],
+    sections: {
+      problem: `As part of ZOTBotics' Introductory Makerspace (ZIMS) program at UC Irvine, I
+        worked with a team of six over five months (January–May 2025) to design, 3D print, and
+        assemble a BCN3D Moveo robotic arm with a hand/finger end-effector that could form rock,
+        paper, and scissors gestures on a button press — which randomly generated the arm's move
+        — and compete head-to-head against other teams.`,
+      contribution: `I was the Mechanical Designer for the robotic hand: I designed the
+        hand/finger end-effector on my own in SolidWorks and worked with the team to manufacture
+        the rest of the arm. Through iterative CAD changes and assembly tolerance corrections I
+        improved joint stability by an estimated ~25% (an estimate, not a measurement).`,
+      approach: `I modeled the hand and finger assemblies in SOLIDWORKS and fabricated the
+        components via 3D printing on Bambu A1 printers. The initial finger-actuation design used
+        spools mounted on each servo to wind thread that opened and closed the fingers — one spool
+        on the palm pulling the top two fingers down, a second spool behind the fingers pulling
+        them back up, with the thread guided through small loops at the fingertips; the thumb used
+        the same two-spool concept. That approach failed in practice: the servos only rotate 180°
+        (not 360°), which wasn't enough range to wind and unwind the thread as designed. I
+        scrapped the spool mechanism and redesigned around cross-shaped and straight servo horns,
+        which successfully actuated the fingers within the servos' available range of motion.
+        The team 3D printed and assembled the full arm, wired the stepper motors to their drivers,
+        and ran an Arduino controller to execute the rock-paper-scissors gestures on a button
+        press.`,
+      challenges: `<ul>
+          <li><strong>Spool-and-thread actuation didn't work</strong> — the servos' 180° range
+            couldn't wind/unwind the thread as designed, so I redesigned the mechanism around
+            cross-shaped and straight servo horns instead.</li>
+          <li><strong>Servo horns slipped under load</strong> — the plastic horns didn't have
+            teeth strong enough to grip the servo shaft. Fixed last-minute by securing the horns
+            with super glue, which held through the competition; a metal horn with a clamping
+            mechanism would be the more durable long-term fix.</li>
+          <li><strong>Joint stability</strong> was improved by an estimated ~25% through iterative
+            CAD modifications and assembly tolerance corrections. This is my estimate; I did not
+            measure it.</li>
+          <li><strong>Weight</strong> — reduced infill density from 20% to 15% to lighten the
+            hand, though the overall design remained bulkier than ideal.</li>
+        </ul>`,
+      results: `Delivered a complete, working robotic arm with a hand/finger end-effector that
+        formed rock, paper, and scissors gestures on a button press that randomly generated the
+        arm's move. Competing against 13 other teams in the final tournament, the team
+        <strong>placed 1st</strong>.`,
+      takeaways: `In a future iteration, I'd focus on slimming down the hand's overall weight and
+        bulkiness without compromising function — the infill reduction helped, but the design was
+        still bulkier than I'd like. I'd also switch from plastic to metal servo horns with a
+        clamping mechanism, which would grip the servo shaft securely and eliminate the slipping
+        issue that forced a super-glue fix.`,
     },
   },
 ];
